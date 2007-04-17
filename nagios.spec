@@ -5,12 +5,12 @@
 
 Summary:	Host/service/network monitoring program
 Name:		nagios
-Version:	2.7
+Version:	2.9
 Release:	%mkrel 1
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.nagios.org/
-Source0:	http://prdownloads.sourceforge.net/nagios/%{name}-%{version}.tar.bz2
+Source0:	http://prdownloads.sourceforge.net/nagios/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source4:	http://nagios.sourceforge.net/download/contrib/misc/mergecfg/mergecfg
 Source5:	favicon.ico
@@ -78,10 +78,6 @@ Requires(pre): rpm-helper apache-mpm-prefork
 Requires(postun): rpm-helper apache-mpm-prefork
 Requires(post): %{name} = %{epoch}:%{version}-%{release}
 Requires(preun): %{name} = %{epoch}:%{version}-%{release}
-%if %mdkversion >= 200700
-Requires(post): desktop-file-utils
-Requires(postun): desktop-file-utils
-%endif
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	apache-mpm-prefork
 Requires:	freetype
@@ -89,6 +85,8 @@ Requires:	freetype2
 Requires:	mailx
 Requires:	perl
 Requires:	traceroute
+Requires:	%{name}-imagepaks
+Requires:	%{name}-theme
 Epoch:		%{epoch}
 
 %description	www
@@ -102,6 +100,16 @@ Several CGI programs are included with Nagios in order to allow you to view the
 current service status, problem history, notification history, and log file via
 the web. This package provides the HTML and CGI files for the Nagios web
 interface. In addition, HTML documentation is included in this package
+
+%package	theme-default
+Summary:	Default Nagios theme
+Group:		Networking/WWW
+Requires:	nagios-www = %{epoch}:%{version}-%{release}
+Provides:	nagios-theme
+Obsoletes:	nagios-theme
+
+%description theme-default
+Original theme from Nagios.
 
 %package	devel
 Group:		Development/C
@@ -131,7 +139,7 @@ for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type 
 done
     
 %patch0 -p1 -b .optflags
-%patch3 -p1
+%patch3 -p0
 %patch6 -p1
 %patch7 -p0
 %patch8 -p0
@@ -207,7 +215,7 @@ install -d -m0755 %{buildroot}%{_var}/run/nagios
 install -d -m0755 %{buildroot}%{_includedir}/nagios
 install -d -m0755 %{buildroot}%{_initrddir}
 
-install -d -m0755 %{buildroot}%{_sysconfdir}/nagios/{servers,printers,switches,routers}
+install -d -m0755 %{buildroot}%{_sysconfdir}/nagios/{servers,printers,switches,routers,plugins.d}
 install -d -m0755 %{buildroot}%{_libdir}/nagios/plugins/eventhandlers
 
 make \
@@ -440,9 +448,6 @@ if [ -f %{_var}/lock/subsys/httpd ]; then
     %{_initrddir}/httpd restart 1>&2;
 fi
 %update_menus
-%if %mdkversion >= 200700
-%update_desktop_database
-%endif
 
 if [ -z "`cat %{_sysconfdir}/%{name}/passwd|cut -d: -f2`" ]; then
     echo "Setting a unique password for the %{name} web user. As root look in the %{_sysconfdir}/%{name}/passwd.plaintext file to view it."
@@ -459,9 +464,6 @@ if [ "$1" = "0" ]; then
     fi
 fi
 %clean_menus
-%if %mdkversion >= 200700
-%clean_desktop_database
-%endif
 
 %clean
 [ -n "%{buildroot}" -a "%{buildroot}" != / ] && rm -rf %{buildroot}
@@ -477,6 +479,7 @@ fi
 %attr(0755,root,root) %dir %{_sysconfdir}/nagios/printers
 %attr(0755,root,root) %dir %{_sysconfdir}/nagios/switches
 %attr(0755,root,root) %dir %{_sysconfdir}/nagios/routers
+%attr(0755,root,root) %dir %{_sysconfdir}/nagios/plugins.d
 %attr(0755,%{nsusr},%{nsgrp}) %dir %{_var}/log/nagios
 %attr(0755,%{nsusr},%{nsgrp}) %dir %{_var}/log/nagios/archives
 %attr(2775,%{nsusr},%{cmdgrp}) %dir %{_var}/spool/nagios
@@ -489,16 +492,30 @@ fi
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/nagios/passwd
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/nagios/group
 %attr(0755,root,root) %{_libdir}/nagios/cgi/*
-%attr(-,root,root) %{_datadir}/nagios
+#%attr(-,root,root) %{_datadir}/nagios
+%attr(-,root,root) %dir %{_datadir}/nagios
+%attr(-,root,root) %dir %{_datadir}/nagios/images
+%attr(-,root,root) %dir %{_datadir}/nagios/stylesheets
+%{_datadir}/nagios/favicon.ico
+%{_datadir}/nagios/robots.txt
+%{_datadir}/nagios/contexthelp
+%{_datadir}/nagios/docs
+%{_datadir}/nagios/media
+%{_datadir}/nagios/ssi
+
 %{_menudir}/%{name}
 %{_iconsdir}/%{name}.png
 %{_miconsdir}/%{name}.png
 %{_liconsdir}/%{name}.png
 %{_datadir}/applications/*.desktop
 
+%files theme-default
+%defattr(644,root,root,755)
+%{_datadir}/nagios/*.html
+%{_datadir}/nagios/images/*
+%{_datadir}/nagios/stylesheets/*
+
 %files devel
 %defattr(-,root,root)
 %multiarch %{multiarch_includedir}/nagios/locations.h
 %{_includedir}/nagios
-
-
