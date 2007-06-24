@@ -6,7 +6,7 @@
 Summary:	Host/service/network monitoring program
 Name:		nagios
 Version:	2.9
-Release:	%mkrel 2
+Release:	%mkrel 3
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.nagios.org/
@@ -74,12 +74,12 @@ Summary:	Provides the HTML and CGI files for the Nagios web interface
 Group:		Networking/WWW
 Requires(post): rpm-helper
 Requires(preun): rpm-helper
-Requires(pre): rpm-helper apache-mpm-prefork
-Requires(postun): rpm-helper apache-mpm-prefork
+Requires(pre): rpm-helper apache-mpm
+Requires(postun): rpm-helper apache-mpm
 Requires(post): %{name} = %{epoch}:%{version}-%{release}
 Requires(preun): %{name} = %{epoch}:%{version}-%{release}
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	apache-mpm-prefork
+Requires:	apache-mpm
 Requires:	freetype
 Requires:	freetype2
 Requires:	mailx
