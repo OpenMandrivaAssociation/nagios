@@ -6,7 +6,7 @@
 Summary:	Host/service/network monitoring program
 Name:		nagios
 Version:	2.9
-Release:	%mkrel 3
+Release:	%mkrel 4
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.nagios.org/
@@ -155,16 +155,11 @@ rm -f configure; touch missing
 libtoolize --copy --force; aclocal-1.7; autoconf
 #; automake --add-missing
 
-export CFLAGS="%{optflags} -fPIC"
-export CXXFLAGS="%{optflags} -fPIC"
-export FFLAGS="%{optflags} -fPIC"
+%serverbuild
 
-%if %mdkversion >= 200710
-export CFLAGS="$CFLAGS -fstack-protector"
-export CXXFLAGS="$CXXFLAGS -fstack-protector"
-export FFLAGS="$FFLAGS -fstack-protector"
-%endif
-
+export CFLAGS="$CFLAGS -fPIC"
+export CXXFLAGS="$CXXFLAGS -fPIC"
+export FFLAGS="$FFLAGS -fPIC"
 
 ./configure \
     --prefix=%{_prefix} \
@@ -510,7 +505,6 @@ fi
 %{_datadir}/nagios/docs
 %{_datadir}/nagios/media
 %{_datadir}/nagios/ssi
-
 %{_menudir}/%{name}
 %{_iconsdir}/%{name}.png
 %{_miconsdir}/%{name}.png
