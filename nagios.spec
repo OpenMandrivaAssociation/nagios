@@ -29,7 +29,7 @@ Requires:	gawk
 Requires:	grep
 Requires:	nagios-plugins
 Requires:	shadow-utils
-Requires:	textutils
+Requires:	coreutils
 Requires:	perl
 BuildRequires:	freetype2-devel
 BuildRequires:	freetype-devel
