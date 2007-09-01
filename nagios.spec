@@ -5,46 +5,48 @@
 
 Summary:	Host/service/network monitoring program
 Name:		nagios
-Version:	2.9
-Release:	%mkrel 5
+Version:	3.0
+Release:	%mkrel 0.0.b3.1
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.nagios.org/
-Source0:	http://prdownloads.sourceforge.net/nagios/%{name}-%{version}.tar.gz
+Source0:	http://prdownloads.sourceforge.net/nagios/%{name}-%{version}b3.tar.gz
 Source1:	%{name}.init
 Source4:	http://nagios.sourceforge.net/download/contrib/misc/mergecfg/mergecfg
 Source5:	favicon.ico
 Patch0:		nagios-optflags.diff
-Patch3:		nagios-scandir.diff
-Patch6:		nagios-favicon.diff
-Patch7:		nagios-nonroot-no_priv_drop.diff
-Patch8:		nagios-no_strip.diff
-Patch9:		nagios-2.6-mdv_conf.diff
+Patch1:		nagios-scandir.diff
+Patch2:		nagios-favicon.diff
+Patch3:		nagios-nonroot-no_priv_drop.diff
+Patch4:		nagios-no_strip.diff
+Patch5:		nagios-mdv_conf.diff
+Patch6:		nagios-DESTDIR.diff
 Requires(post): rpm-helper
 Requires(preun): rpm-helper
 Requires(pre): rpm-helper apache-conf
 Requires(postun): rpm-helper apache-conf
 Requires:	apache-conf
+Requires:	coreutils
 Requires:	gawk
 Requires:	grep
 Requires:	nagios-plugins
-Requires:	shadow-utils
-Requires:	coreutils
 Requires:	perl
+Requires:	shadow-utils
+BuildRequires:  autoconf2.5
+BuildRequires:  automake1.7
 BuildRequires:	freetype2-devel
 BuildRequires:	freetype-devel
 BuildRequires: 	gd-devel
-BuildRequires:	jpeg-devel
-BuildRequires:	png-devel
-BuildRequires:	xpm-devel
-BuildRequires:	XFree86-devel
-BuildRequires:	zlib-devel
-BuildRequires:	perl-devel
-BuildRequires:  autoconf2.5
-BuildRequires:  automake1.7
-BuildRequires:  libtool
 BuildRequires:	ImageMagick
+BuildRequires:	jpeg-devel
+BuildRequires:  libtool
 BuildRequires:	multiarch-utils >= 1.0.3
+BuildRequires:	nail
+BuildRequires:	perl-devel
+BuildRequires:	png-devel
+BuildRequires:	XFree86-devel
+BuildRequires:	xpm-devel
+BuildRequires:	zlib-devel
 # use this when embedded perl works in nagios
 #Requires:	libgdbm2
 #BuildRequires: 	libgdbm2-devel
@@ -82,7 +84,7 @@ Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	apache-mpm
 Requires:	freetype
 Requires:	freetype2
-Requires:	mailx
+Requires:	nail
 Requires:	perl
 Requires:	traceroute
 Requires:	%{name}-imagepaks
@@ -128,7 +130,7 @@ compile against.
 
 %prep
 
-%setup -q -n %{name}-%{version}
+%setup -q -n %{name}-%{version}b3
 
 find . -type d -perm 0700 -exec chmod 755 {} \;
 find . -type f -perm 0555 -exec chmod 755 {} \;
@@ -137,13 +139,14 @@ find . -type f -perm 0444 -exec chmod 644 {} \;
 for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type f -name .#\*`; do
     if [ -e "$i" ]; then rm -rf $i; fi >&/dev/null
 done
-    
-%patch0 -p1 -b .optflags
+
+%patch0 -p1
+%patch1 -p0
+%patch2 -p1
 %patch3 -p0
-%patch6 -p1
-%patch7 -p0
-%patch8 -p0
-%patch9 -p1
+%patch4 -p0
+%patch5 -p0
+%patch6 -p0
 
 cp %{SOURCE1} nagios.init
 cp %{SOURCE4} mergecfg
@@ -163,6 +166,9 @@ export FFLAGS="$FFLAGS -fPIC"
 
 ./configure \
     --prefix=%{_prefix} \
+    --with-httpd-conf=%{_sysconfdir}/httpd/conf/webapps.d \
+    --with-checkresult-dir=/var/spool/nagios/checkresults \
+    --with-temp-dir=/tmp \
     --with-init-dir=%{_initrddir} \
     --exec-prefix=%{_sbindir} \
     --bindir=%{_sbindir} \
@@ -170,8 +176,8 @@ export FFLAGS="$FFLAGS -fPIC"
     --libexecdir=%{_libdir}/nagios/plugins \
     --datadir=%{_datadir}/nagios \
     --sysconfdir=%{_sysconfdir}/nagios \
-    --localstatedir=%{_var}/log/nagios \
-    --with-lockfile=%{_var}/run/nagios/nagios.pid \
+    --localstatedir=/var/log/nagios \
+    --with-lockfile=/var/run/nagios/nagios.pid \
     --with-mail=/bin/mail \
     --with-nagios-user=%{nsusr} \
     --with-nagios-group=%{nsgrp} \
@@ -213,8 +219,8 @@ popd
 export DONT_GPRINTIFY=1
 
 install -d -m0755 %{buildroot}%{_sysconfdir}/httpd/conf/webapps.d
-install -d -m0755 %{buildroot}%{_var}/spool/nagios
-install -d -m0755 %{buildroot}%{_var}/run/nagios
+install -d -m0755 %{buildroot}/var/spool/nagios
+install -d -m0755 %{buildroot}/var/run/nagios
 install -d -m0755 %{buildroot}%{_includedir}/nagios
 install -d -m0755 %{buildroot}%{_initrddir}
 
@@ -231,7 +237,7 @@ make \
     INIT_OPTS="" \
     INSTALL=install \
     INSTALL_OPTS="" \
-    LOGDIR=%{_var}/log/nagios \
+    LOGDIR=/var/log/nagios \
     install \
     install-html \
     install-commandmode \
@@ -262,7 +268,7 @@ pushd contrib
 	INIT_OPTS="" \
 	INSTALL=install \
 	INSTALL_OPTS="" \
-	LOGDIR=%{_var}/log/nagios \
+	LOGDIR=/var/log/nagios \
 	install
 popd
 
@@ -270,7 +276,7 @@ popd
 find %{buildroot}%{_datadir}/nagios -type d | xargs chmod 755
 
 # fix default config
-perl -p -i -e "s|=%{_var}/log/nagios/rw/|=%{_var}/spool/nagios/|g" %{buildroot}%{_sysconfdir}/nagios/*
+perl -p -i -e "s|=/var/log/nagios/rw/|=/var/spool/nagios/|g" %{buildroot}%{_sysconfdir}/nagios/*
 
 # install simplified init script
 install -m0755 nagios.init %{buildroot}%{_initrddir}/nagios
@@ -368,10 +374,10 @@ install -m0755 contrib/eventhandlers/distributed-monitoring/submit_check_result_
 install -m0755 contrib/eventhandlers/redundancy-scenario1/handle-master-host-event %{buildroot}%{_libdir}/nagios/plugins/eventhandlers/
 install -m0755 contrib/eventhandlers/redundancy-scenario1/handle-master-proc-event %{buildroot}%{_libdir}/nagios/plugins/eventhandlers/
 
-find %{buildroot}%{_libdir}/nagios/plugins/eventhandlers -type f | xargs perl -pi -e "s|/usr/local/nagios%{_var}/rw/|%{_var}/spool/nagios/|g"
+find %{buildroot}%{_libdir}/nagios/plugins/eventhandlers -type f | xargs perl -pi -e "s|/usr/local/nagios/var/rw/|/var/spool/nagios/|g"
 find %{buildroot}%{_libdir}/nagios/plugins/eventhandlers -type f | xargs perl -pi -e "s|/usr/local/nagios/libexec/eventhandlers|%{_libdir}/nagios/plugins/eventhandlers|g"
 find %{buildroot}%{_libdir}/nagios/plugins/eventhandlers -type f | xargs perl -pi -e "s|/usr/local/nagios/libexec/send_nsca|%{_libdir}/nagios/plugins/send_nsca|g"
-find %{buildroot}%{_libdir}/nagios/plugins/eventhandlers -type f | xargs perl -pi -e "s|/usr/local/nagios/test%{_var}|%{_var}/log/nagios|g"
+find %{buildroot}%{_libdir}/nagios/plugins/eventhandlers -type f | xargs perl -pi -e "s|/usr/local/nagios/test/var|/var/log/nagios|g"
 find %{buildroot}%{_libdir}/nagios/plugins/eventhandlers -type f | xargs perl -pi -e "s|/usr/local/nagios/etc/send_nsca.cfg|%{_sysconfdir}/nagios/send_nsca.cfg|g"
 
 # Mandriva Icons
@@ -379,9 +385,9 @@ install -d %{buildroot}%{_iconsdir}
 install -d %{buildroot}%{_miconsdir}
 install -d %{buildroot}%{_liconsdir}
 
-convert html/images/logofullsize.jpg -resize 16x16  %{buildroot}%{_miconsdir}/%{name}.png
-convert html/images/logofullsize.jpg -resize 32x32  %{buildroot}%{_iconsdir}/%{name}.png
-convert html/images/logofullsize.jpg -resize 48x48  %{buildroot}%{_liconsdir}/%{name}.png
+convert html/images/logofullsize.png -resize 16x16  %{buildroot}%{_miconsdir}/%{name}.png
+convert html/images/logofullsize.png -resize 32x32  %{buildroot}%{_iconsdir}/%{name}.png
+convert html/images/logofullsize.png -resize 48x48  %{buildroot}%{_liconsdir}/%{name}.png
 
 # install menu entry.
 install -d %{buildroot}%{_menudir}
@@ -422,8 +428,11 @@ web access user will be generated if needed. The password will be saved in
 clear text in the /etc/nagios/passwd.plaintext file.
 EOF
 
+# cleanup
+rm -f %{buildroot}%{_sysconfdir}/httpd/conf/webapps.d/nagios.conf
+
 %pre
-%_pre_useradd %{nsusr} %{_var}/log/nagios /bin/sh
+%_pre_useradd %{nsusr} /var/log/nagios /bin/sh
 # this logic is taken from sympa
 groups=`groups %{cmdgrp} | cut -d " " -f 4- | tr ' ' ,`
 if [ -n "$groups" ]; then
@@ -447,7 +456,7 @@ if [ "$1" -ge "1" ]; then
 fi
 
 %post www
-if [ -f %{_var}/lock/subsys/httpd ]; then
+if [ -f /var/lock/subsys/httpd ]; then
     %{_initrddir}/httpd restart 1>&2;
 fi
 %update_menus
@@ -462,7 +471,7 @@ fi
 
 %postun www
 if [ "$1" = "0" ]; then
-    if [ -f %{_var}/lock/subsys/httpd ]; then
+    if [ -f /var/lock/subsys/httpd ]; then
         %{_initrddir}/httpd restart 1>&2
     fi
 fi
@@ -476,17 +485,21 @@ fi
 %doc Changelog INSTALLING LEGAL README* UPGRADING README.urpmi sample-config/mrtg.cfg
 %attr(0755,root,root) %{_initrddir}/nagios
 %attr(0755,root,root) %{_sbindir}/*
-%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/nagios/*-sample
-%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/nagios/*.cfg
+%attr(0755,root,root) %dir %{_sysconfdir}/nagios
+%attr(0644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/nagios/*.cfg
 %attr(0755,root,root) %dir %{_sysconfdir}/nagios/servers
 %attr(0755,root,root) %dir %{_sysconfdir}/nagios/printers
 %attr(0755,root,root) %dir %{_sysconfdir}/nagios/switches
 %attr(0755,root,root) %dir %{_sysconfdir}/nagios/routers
 %attr(0755,root,root) %dir %{_sysconfdir}/nagios/plugins.d
-%attr(0755,%{nsusr},%{nsgrp}) %dir %{_var}/log/nagios
-%attr(0755,%{nsusr},%{nsgrp}) %dir %{_var}/log/nagios/archives
-%attr(2775,%{nsusr},%{cmdgrp}) %dir %{_var}/spool/nagios
-%attr(0755,%{nsusr},%{nsgrp}) %dir %{_var}/run/nagios
+%attr(0755,root,root) %dir %{_sysconfdir}/nagios/objects
+%attr(0644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/nagios/objects/*.cfg
+%attr(0755,%{nsusr},%{nsgrp}) %dir /var/log/nagios
+%attr(0755,%{nsusr},%{nsgrp}) %dir /var/log/nagios/archives
+%attr(2775,%{nsusr},%{cmdgrp}) %dir /var/spool/nagios
+%attr(0755,%{nsusr},%{nsgrp}) %dir /var/spool/nagios/checkresults
+%attr(0755,%{nsusr},%{nsgrp}) %dir /var/run/nagios
+%attr(0755,root,root) %dir %{_libdir}/nagios/plugins/eventhandlers
 %attr(0755,root,root) %{_libdir}/nagios/plugins/eventhandlers/*
 
 %files www
