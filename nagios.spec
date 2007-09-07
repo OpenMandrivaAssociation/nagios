@@ -6,7 +6,7 @@
 Summary:	Host/service/network monitoring program
 Name:		nagios
 Version:	3.0
-Release:	%mkrel 0.0.b3.1
+Release:	%mkrel 0.0.b3.2
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.nagios.org/
@@ -202,6 +202,9 @@ export FFLAGS="$FFLAGS -fPIC"
 #    --enable-embedded-perl \
 #    --with-perlcache \
 
+# bug
+perl -pi -e "s|/var/log/nagios/spool/checkresults|/var/spool/nagios/checkresults|g" include/locations.h
+
 %make all
 
 pushd contrib
@@ -219,7 +222,7 @@ popd
 export DONT_GPRINTIFY=1
 
 install -d -m0755 %{buildroot}%{_sysconfdir}/httpd/conf/webapps.d
-install -d -m0755 %{buildroot}/var/spool/nagios
+install -d -m0755 %{buildroot}/var/spool/nagios/checkresults
 install -d -m0755 %{buildroot}/var/run/nagios
 install -d -m0755 %{buildroot}%{_includedir}/nagios
 install -d -m0755 %{buildroot}%{_initrddir}
