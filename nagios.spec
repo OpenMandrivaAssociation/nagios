@@ -6,7 +6,7 @@
 Summary:	Host/service/network monitoring program
 Name:		nagios
 Version:	3.0
-Release:	%mkrel 0.0.b3.3
+Release:	%mkrel 0.0.b3.4
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.nagios.org/
@@ -444,7 +444,7 @@ rm -f %{buildroot}%{_sysconfdir}/httpd/conf/webapps.d/nagios.conf
 
 %pre
 %{_sbindir}/useradd -r -M -s /bin/sh -d /var/log/nagios -c "system user for %{nsusr}" %{nsusr} >/dev/null 2>&1 || :
-%{_bindir}/gpasswd -a %{nsusr} %{cmdgrp} >/dev/null 2>&1 || :
+%{_bindir}/gpasswd -a %{cmdusr} %{nsgrp} >/dev/null 2>&1 || :
 
 %post
 if [ $1 = 1 ] ; then
