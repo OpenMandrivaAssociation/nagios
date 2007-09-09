@@ -6,7 +6,7 @@
 Summary:	Host/service/network monitoring program
 Name:		nagios
 Version:	3.0
-Release:	%mkrel 0.0.b3.2
+Release:	%mkrel 0.0.b3.3
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.nagios.org/
@@ -301,6 +301,11 @@ cat > apache-nagios.conf << EOF
         deny from all
         allow from 127.0.0.1
 	ErrorDocument 403 "Access denied per %{_sysconfdir}/httpd/conf/webapps.d/12_nagios.conf"
+	AuthType Basic
+	AuthUserFile %{_sysconfdir}/%{name}/passwd
+	AuthGroupFile %{_sysconfdir}/%{name}/group
+	AuthName "Nagios Access"
+	Require valid-user
     </Directory>
 
     Alias /%{name} %{_datadir}/%{name}
@@ -311,6 +316,11 @@ cat > apache-nagios.conf << EOF
         deny from all
         allow from 127.0.0.1
 	ErrorDocument 403 "Access denied per %{_sysconfdir}/httpd/conf/webapps.d/12_nagios.conf"
+	AuthType Basic
+	AuthUserFile %{_sysconfdir}/%{name}/passwd
+	AuthGroupFile %{_sysconfdir}/%{name}/group
+	AuthName "Nagios Access"
+	Require valid-user
     </Directory>
 
 </IfModule>
@@ -324,14 +334,13 @@ cat > apache-nagios.conf << EOF
     <Directory %{_libdir}/%{name}/cgi>
 	Options ExecCGI
 	SSLRequireSSL
-	order deny,allow
-	deny from all
+	Order Deny,Allow
+	Deny from all
 	AuthType Basic
 	AuthUserFile %{_sysconfdir}/%{name}/passwd
 	AuthGroupFile %{_sysconfdir}/%{name}/group
-	AuthName "%{name}"
-	require group %{name}
-	Satisfy Any
+	AuthName "Nagios Access"
+	Require valid-user
     </Directory>
 
     Alias /%{name} %{_datadir}/%{name}
@@ -339,14 +348,13 @@ cat > apache-nagios.conf << EOF
     <Directory %{_datadir}/%{name}>
 	Options None
 	SSLRequireSSL
-	order deny,allow
-	deny from all
+	Order Deny,Allow
+	Deny from all
 	AuthType Basic
 	AuthUserFile %{_sysconfdir}/%{name}/passwd
 	AuthGroupFile %{_sysconfdir}/%{name}/group
-	AuthName "%{name}"
-	require group %{name}
-	Satisfy Any
+	AuthName "Nagios Access"
+	Require valid-user
     </Directory>
 
 # Uncomment the following lines to force a redirect to a working
@@ -435,17 +443,13 @@ EOF
 rm -f %{buildroot}%{_sysconfdir}/httpd/conf/webapps.d/nagios.conf
 
 %pre
-%_pre_useradd %{nsusr} /var/log/nagios /bin/sh
-# this logic is taken from sympa
-groups=`groups %{cmdgrp} | cut -d " " -f 4- | tr ' ' ,`
-if [ -n "$groups" ]; then
-    groups="$groups,%{nsgrp}"
-else
-    groups="%{nsgrp}";
-fi
-usermod -G $groups %{cmdgrp}
+%{_sbindir}/useradd -r -M -s /bin/sh -d /var/log/nagios -c "system user for %{nsusr}" %{nsusr} >/dev/null 2>&1 || :
+%{_bindir}/gpasswd -a %{nsusr} %{cmdgrp} >/dev/null 2>&1 || :
 
 %post
+if [ $1 = 1 ] ; then
+    chown -R %{nsusr}:%{nsgrp} /var/log/nagios /var/spool/nagios /var/run/nagios > /dev/null 2>&1
+fi
 %_post_service %{name}
 
 %preun
