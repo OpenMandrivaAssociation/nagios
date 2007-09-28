@@ -6,18 +6,17 @@
 Summary:	Host/service/network monitoring program
 Name:		nagios
 Version:	3.0
-Release:	%mkrel 0.0.b3.4
+Release:	%mkrel 0.0.b4.1
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.nagios.org/
-Source0:	http://prdownloads.sourceforge.net/nagios/%{name}-%{version}b3.tar.gz
+Source0:	http://prdownloads.sourceforge.net/nagios/%{name}-%{version}b4.tar.gz
 Source1:	%{name}.init
 Source4:	http://nagios.sourceforge.net/download/contrib/misc/mergecfg/mergecfg
 Source5:	favicon.ico
 Patch0:		nagios-optflags.diff
 Patch1:		nagios-scandir.diff
 Patch2:		nagios-favicon.diff
-Patch3:		nagios-nonroot-no_priv_drop.diff
 Patch4:		nagios-no_strip.diff
 Patch5:		nagios-mdv_conf.diff
 Patch6:		nagios-DESTDIR.diff
@@ -130,7 +129,7 @@ compile against.
 
 %prep
 
-%setup -q -n %{name}-%{version}b3
+%setup -q -n %{name}-%{version}b4
 
 find . -type d -perm 0700 -exec chmod 755 {} \;
 find . -type f -perm 0555 -exec chmod 755 {} \;
@@ -143,7 +142,6 @@ done
 %patch0 -p1
 %patch1 -p0
 %patch2 -p1
-%patch3 -p0
 %patch4 -p0
 %patch5 -p0
 %patch6 -p0
