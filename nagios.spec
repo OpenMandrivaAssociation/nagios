@@ -6,7 +6,7 @@
 Summary:	Host/service/network monitoring program
 Name:		nagios
 Version:	3.0
-Release:	%mkrel 0.0.b6.1
+Release:	%mkrel 0.0.b6.2
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.nagios.org/
@@ -303,7 +303,8 @@ cat > apache-nagios.conf << EOF
 	AuthUserFile %{_sysconfdir}/%{name}/passwd
 	AuthGroupFile %{_sysconfdir}/%{name}/group
 	AuthName "Nagios Access"
-	Require valid-user
+	Require group nagios
+	Satisfy Any
     </Directory>
 
     Alias /%{name} %{_datadir}/%{name}
@@ -318,7 +319,8 @@ cat > apache-nagios.conf << EOF
 	AuthUserFile %{_sysconfdir}/%{name}/passwd
 	AuthGroupFile %{_sysconfdir}/%{name}/group
 	AuthName "Nagios Access"
-	Require valid-user
+	Require group nagios
+	Satisfy Any
     </Directory>
 
 </IfModule>
@@ -338,7 +340,8 @@ cat > apache-nagios.conf << EOF
 	AuthUserFile %{_sysconfdir}/%{name}/passwd
 	AuthGroupFile %{_sysconfdir}/%{name}/group
 	AuthName "Nagios Access"
-	Require valid-user
+	Require group nagios
+	Satisfy Any
     </Directory>
 
     Alias /%{name} %{_datadir}/%{name}
@@ -352,7 +355,8 @@ cat > apache-nagios.conf << EOF
 	AuthUserFile %{_sysconfdir}/%{name}/passwd
 	AuthGroupFile %{_sysconfdir}/%{name}/group
 	AuthName "Nagios Access"
-	Require valid-user
+	Require group nagios
+	Satisfy Any
     </Directory>
 
 # Uncomment the following lines to force a redirect to a working
