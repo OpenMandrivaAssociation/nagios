@@ -43,7 +43,7 @@ BuildRequires:	multiarch-utils >= 1.0.3
 BuildRequires:	nail
 BuildRequires:	perl-devel
 BuildRequires:	png-devel
-BuildRequires:	XFree86-devel
+BuildRequires:	X11-devel
 BuildRequires:	xpm-devel
 BuildRequires:	zlib-devel
 # use this when embedded perl works in nagios
