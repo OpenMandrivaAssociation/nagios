@@ -516,6 +516,7 @@ fi
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/nagios/group
 %attr(0755,root,root) %{_libdir}/nagios/cgi/*
 #%attr(-,root,root) %{_datadir}/nagios
+%attr(-,root,root) %dir %{_libdir}/nagios/cgi
 %attr(-,root,root) %dir %{_datadir}/nagios
 %attr(-,root,root) %dir %{_datadir}/nagios/images
 %attr(-,root,root) %dir %{_datadir}/nagios/stylesheets
