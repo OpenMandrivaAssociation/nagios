@@ -53,6 +53,7 @@ BuildRequires:	zlib-devel
 Obsoletes:	netsaint
 Provides:	netsaint
 Epoch:		1
+BuildRoot:	%{_tmppath}/%{name}-buildroot
 
 %description
 Nagios is a program that will monitor hosts and services on your
