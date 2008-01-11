@@ -403,17 +403,6 @@ convert html/images/logofullsize.png -resize 32x32  %{buildroot}%{_iconsdir}/%{n
 convert html/images/logofullsize.png -resize 48x48  %{buildroot}%{_liconsdir}/%{name}.png
 
 # install menu entry.
-install -d %{buildroot}%{_menudir}
-cat > %{buildroot}%{_menudir}/%{name} << EOF
-?package(%{name}): \
-needs=X11 \
-section=System/Monitoring \
-title="Nagios" \
-longtitle="%{summary}" \
-command="%{_bindir}/www-browser http://localhost/%{name}/" \
-icon="%{name}.png" \
-xdg="true"
-EOF
 
 # XDG menu
 install -d %{buildroot}%{_datadir}/applications
@@ -527,7 +516,6 @@ fi
 %{_datadir}/nagios/docs
 %{_datadir}/nagios/media
 %{_datadir}/nagios/ssi
-%{_menudir}/%{name}
 %{_iconsdir}/%{name}.png
 %{_miconsdir}/%{name}.png
 %{_liconsdir}/%{name}.png
