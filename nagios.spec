@@ -14,17 +14,19 @@ Source0:	http://prdownloads.sourceforge.net/nagios/%{name}-%{version}rc1.tar.gz
 Source1:	%{name}.init
 Source4:	http://nagios.sourceforge.net/download/contrib/misc/mergecfg/mergecfg
 Source5:	favicon.ico
+Source6:	README.Mandriva
 Patch0:		nagios-optflags.diff
 Patch1:		nagios-scandir.diff
 Patch2:		nagios-favicon.diff
 Patch4:		nagios-no_strip.diff
 Patch5:		nagios-mdv_conf.diff
 Patch6:		nagios-DESTDIR.diff
-Requires(post): rpm-helper
-Requires(preun): rpm-helper
+Requires(post): rpm-helper nagios-conf
+Requires(preun): rpm-helper nagios-conf
 Requires(pre): rpm-helper apache-conf
 Requires(postun): rpm-helper apache-conf
 Requires:	apache-conf
+Requires:	nagios-conf
 Requires:	coreutils
 Requires:	gawk
 Requires:	grep
@@ -53,7 +55,7 @@ BuildRequires:	zlib-devel
 Obsoletes:	netsaint
 Provides:	netsaint
 Epoch:		1
-BuildRoot:	%{_tmppath}/%{name}-buildroot
+Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 Nagios is a program that will monitor hosts and services on your
@@ -75,12 +77,12 @@ Summary:	Provides the HTML and CGI files for the Nagios web interface
 Group:		Networking/WWW
 Requires(post): rpm-helper
 Requires(preun): rpm-helper
-Requires(pre): rpm-helper apache-mpm
-Requires(postun): rpm-helper apache-mpm
+Requires(pre): rpm-helper apache-mpm-prefork
+Requires(postun): rpm-helper apache-mpm-prefork
 Requires(post): %{name} = %{epoch}:%{version}-%{release}
 Requires(preun): %{name} = %{epoch}:%{version}-%{release}
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	apache-mpm
+Requires:	apache-mpm-prefork
 Requires:	freetype
 Requires:	freetype2
 Requires:	nail
@@ -109,7 +111,7 @@ Requires:	nagios-www = %{epoch}:%{version}-%{release}
 Provides:	nagios-theme
 Obsoletes:	nagios-theme
 
-%description theme-default
+%description	theme-default
 Original theme from Nagios.
 
 %package	devel
@@ -149,6 +151,7 @@ done
 cp %{SOURCE1} nagios.init
 cp %{SOURCE4} mergecfg
 cp %{SOURCE5} favicon.ico
+cp %{SOURCE6} README.Mandriva
 
 %build
 export WANT_AUTOCONF_2_5=1
@@ -225,7 +228,7 @@ install -d -m0755 %{buildroot}/var/run/nagios
 install -d -m0755 %{buildroot}%{_includedir}/nagios
 install -d -m0755 %{buildroot}%{_initrddir}
 
-install -d -m0755 %{buildroot}%{_sysconfdir}/nagios/{servers,printers,switches,routers,plugins.d}
+install -d -m0755 %{buildroot}%{_sysconfdir}/nagios/{servers,printers,switches,routers,conf.d,plugins.d}
 install -d -m0755 %{buildroot}%{_libdir}/nagios/plugins/eventhandlers
 
 make \
@@ -244,12 +247,6 @@ make \
     install-commandmode \
     install-config \
     fullinstall
-
-install -m0644 sample-config/cgi.cfg %{buildroot}%{_sysconfdir}/nagios/
-install -m0644 sample-config/nagios.cfg %{buildroot}%{_sysconfdir}/nagios/
-install -m0644 sample-config/resource.cfg %{buildroot}%{_sysconfdir}/nagios/
-install -m0644 sample-config/template-object/commands.cfg %{buildroot}%{_sysconfdir}/nagios/
-install -m0644 sample-config/template-object/localhost.cfg %{buildroot}%{_sysconfdir}/nagios/
 
 # fix docs
 cp sample-config/README README.sample-config
@@ -402,7 +399,19 @@ convert html/images/logofullsize.png -resize 16x16  %{buildroot}%{_miconsdir}/%{
 convert html/images/logofullsize.png -resize 32x32  %{buildroot}%{_iconsdir}/%{name}.png
 convert html/images/logofullsize.png -resize 48x48  %{buildroot}%{_liconsdir}/%{name}.png
 
+%if %mdkversion == 200600
 # install menu entry.
+install -d %{buildroot}%{_menudir}
+cat > %{buildroot}%{_menudir}/%{name} << EOF
+?package(%{name}): \
+needs=X11 \
+section=System/Monitoring \
+title="Nagios" \
+longtitle="%{summary}" \
+command="%{_bindir}/www-browser http://localhost/%{name}/" \
+icon="%{name}.png" \
+EOF
+%endif
 
 # XDG menu
 install -d %{buildroot}%{_datadir}/applications
@@ -410,7 +419,7 @@ cat > %{buildroot}%{_datadir}/applications/mandriva-%{name}.desktop << EOF
 [Desktop Entry]
 Name=Nagios
 Comment=%{summary}
-Exec="%{_bindir}/www-browser http://localhost/%{name}/"
+Exec=%{_bindir}/www-browser http://localhost/%{name}/
 Icon=%{name}
 Terminal=false
 Type=Application
@@ -439,7 +448,7 @@ rm -f %{buildroot}%{_sysconfdir}/httpd/conf/webapps.d/nagios.conf
 
 %post
 if [ $1 = 1 ] ; then
-    chown -R %{nsusr}:%{nsgrp} /var/log/nagios /var/spool/nagios /var/run/nagios > /dev/null 2>&1
+    chown -R %{nsusr}:%{nsgrp} /var/log/nagios /var/spool/nagios /var/run/nagios >/dev/null 2>&1 || :
 fi
 %_post_service %{name}
 
@@ -448,13 +457,13 @@ fi
 
 %postun
 if [ "$1" -ge "1" ]; then
-    %{_initrddir}/%{name} condrestart > /dev/null 2>&1
+    %{_initrddir}/%{name} condrestart >/dev/null 2>&1 || :
 fi	
 %_postun_userdel %{nsusr}
 
 %post www
 if [ -f /var/lock/subsys/httpd ]; then
-    %{_initrddir}/httpd restart 1>&2;
+    %{_initrddir}/httpd restart >/dev/null 2>&1 || :
 fi
 %update_menus
 
@@ -469,7 +478,7 @@ fi
 %postun www
 if [ "$1" = "0" ]; then
     if [ -f /var/lock/subsys/httpd ]; then
-        %{_initrddir}/httpd restart 1>&2
+        %{_initrddir}/httpd restart >/dev/null 2>&1 || :
     fi
 fi
 %clean_menus
@@ -488,6 +497,7 @@ fi
 %attr(0755,root,root) %dir %{_sysconfdir}/nagios/printers
 %attr(0755,root,root) %dir %{_sysconfdir}/nagios/switches
 %attr(0755,root,root) %dir %{_sysconfdir}/nagios/routers
+%attr(0755,root,root) %dir %{_sysconfdir}/nagios/conf.d
 %attr(0755,root,root) %dir %{_sysconfdir}/nagios/plugins.d
 %attr(0755,root,root) %dir %{_sysconfdir}/nagios/objects
 %attr(0644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/nagios/objects/*.cfg
@@ -516,6 +526,9 @@ fi
 %{_datadir}/nagios/docs
 %{_datadir}/nagios/media
 %{_datadir}/nagios/ssi
+%if %mdkversion == 200600
+%{_menudir}/%{name}
+%endif
 %{_iconsdir}/%{name}.png
 %{_miconsdir}/%{name}.png
 %{_liconsdir}/%{name}.png
