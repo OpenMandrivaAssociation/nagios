@@ -6,7 +6,7 @@
 Summary:	Host/service/network monitoring program
 Name:		nagios
 Version:	3.0
-Release:	%mkrel 0.0.rc2.1
+Release:	%mkrel 0.0.rc2.2
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.nagios.org/
@@ -108,7 +108,7 @@ Summary:	Default Nagios theme
 Group:		Networking/WWW
 Requires:	nagios-www = %{epoch}:%{version}-%{release}
 Provides:	nagios-theme
-Obsoletes:	nagios-theme
+Conflicts:	nagios-theme-nuvola
 
 %description	theme-default
 Original theme from Nagios.
