@@ -6,7 +6,7 @@
 Summary:	Host/service/network monitoring program
 Name:		nagios
 Version:	3.0
-Release:	%mkrel 0.0.rc2.2
+Release:	%mkrel 0.0.rc2.3
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.nagios.org/
@@ -407,7 +407,7 @@ section=System/Monitoring \
 title="Nagios" \
 longtitle="%{summary}" \
 command="%{_bindir}/www-browser http://localhost/%{name}/" \
-icon="%{name}.png" \
+icon="%{name}.png"
 EOF
 %endif
 
