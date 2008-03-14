@@ -6,11 +6,11 @@
 Summary:	Host/service/network monitoring program
 Name:		nagios
 Version:	3.0
-Release:	%mkrel 0.0.rc3.1
+Release:	%mkrel 1
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.nagios.org/
-Source0:	http://prdownloads.sourceforge.net/nagios/%{name}-%{version}rc2.tar.gz
+Source0:	http://prdownloads.sourceforge.net/nagios/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source4:	http://nagios.sourceforge.net/download/contrib/misc/mergecfg/mergecfg
 Source5:	favicon.ico
@@ -129,8 +129,7 @@ This package provides include files that Nagios-related applications may
 compile against.
 
 %prep
-
-%setup -q -n %{name}-%{version}rc2
+%setup -q
 
 find . -type d -perm 0700 -exec chmod 755 {} \;
 find . -type f -perm 0555 -exec chmod 755 {} \;
