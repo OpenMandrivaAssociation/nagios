@@ -462,7 +462,9 @@ fi
 if [ -f /var/lock/subsys/httpd ]; then
     %{_initrddir}/httpd restart >/dev/null 2>&1 || :
 fi
+%if %mdkversion < 200900
 %update_menus
+%endif
 
 if [ -z "`cat %{_sysconfdir}/%{name}/passwd|cut -d: -f2`" ]; then
     echo "Setting a unique password for the %{name} web user. As root look in the %{_sysconfdir}/%{name}/passwd.plaintext file to view it."
@@ -478,7 +480,9 @@ if [ "$1" = "0" ]; then
         %{_initrddir}/httpd restart >/dev/null 2>&1 || :
     fi
 fi
+%if %mdkversion < 200900
 %clean_menus
+%endif
 
 %clean
 [ -n "%{buildroot}" -a "%{buildroot}" != / ] && rm -rf %{buildroot}
