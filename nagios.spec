@@ -5,8 +5,8 @@
 
 Summary:	Host/service/network monitoring program
 Name:		nagios
-Version:	3.0.2
-Release:	%mkrel 0.1
+Version:	3.0.3
+Release:	%mkrel 1
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.nagios.org/
