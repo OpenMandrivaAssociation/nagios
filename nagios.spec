@@ -6,7 +6,7 @@
 Summary:	Host/service/network monitoring program
 Name:		nagios
 Version:	3.0.3
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.nagios.org/
@@ -381,11 +381,14 @@ install -m0755 contrib/eventhandlers/distributed-monitoring/submit_check_result_
 install -m0755 contrib/eventhandlers/redundancy-scenario1/handle-master-host-event %{buildroot}%{_libdir}/nagios/plugins/eventhandlers/
 install -m0755 contrib/eventhandlers/redundancy-scenario1/handle-master-proc-event %{buildroot}%{_libdir}/nagios/plugins/eventhandlers/
 
-find %{buildroot}%{_libdir}/nagios/plugins/eventhandlers -type f | xargs perl -pi -e "s|/usr/local/nagios/var/rw/|/var/spool/nagios/|g"
-find %{buildroot}%{_libdir}/nagios/plugins/eventhandlers -type f | xargs perl -pi -e "s|/usr/local/nagios/libexec/eventhandlers|%{_libdir}/nagios/plugins/eventhandlers|g"
-find %{buildroot}%{_libdir}/nagios/plugins/eventhandlers -type f | xargs perl -pi -e "s|/usr/local/nagios/libexec/send_nsca|%{_libdir}/nagios/plugins/send_nsca|g"
-find %{buildroot}%{_libdir}/nagios/plugins/eventhandlers -type f | xargs perl -pi -e "s|/usr/local/nagios/test/var|/var/log/nagios|g"
-find %{buildroot}%{_libdir}/nagios/plugins/eventhandlers -type f | xargs perl -pi -e "s|/usr/local/nagios/etc/send_nsca.cfg|%{_sysconfdir}/nagios/send_nsca.cfg|g"
+find %{buildroot}%{_libdir}/nagios/plugins/eventhandlers -type f | \
+    xargs perl -pi \
+    -e 's|/usr/local/nagios/var/rw/|/var/spool/nagios/|;' \
+    -e 's|/usr/local/nagios/libexec/eventhandlers|%{_libdir}/nagios/plugins/eventhandlers|g;' \
+    -e 's|/usr/local/nagios/libexec/send_nsca|%{_libdir}/nagios/plugins/send_nsca|g;' \
+    -e 's|/usr/local/nagios/test/var|/var/log/nagios|g;' \
+    -e 's|/usr/local/nagios/etc/send_nsca.cfg|%{_sysconfdir}/nagios/send_nsca.cfg|g;' \
+    -e 's|printfcmd="/bin/printf"|printfcmd="/usr/bin/printf"|;'
 
 # Mandriva Icons
 install -d %{buildroot}%{_iconsdir}
