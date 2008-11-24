@@ -6,7 +6,7 @@
 Summary:	Host/service/network monitoring program
 Name:		nagios
 Version:	3.0.5
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.nagios.org/
@@ -365,8 +365,7 @@ cat > apache-nagios.conf << EOF
 </IfModule>
 
 EOF
-install -m0644 apache-nagios.conf \
-    %{buildroot}%{_sysconfdir}/httpd/conf/webapps.d/nagios.conf
+install -m0644 apache-nagios.conf %{buildroot}%{_sysconfdir}/httpd/conf/webapps.d/12_nagios.conf
 
 echo "%{name}:" > %{buildroot}%{_sysconfdir}/nagios/passwd
 echo "%{name}: root %{name}" > %{buildroot}%{_sysconfdir}/nagios/group
@@ -439,6 +438,9 @@ made in the config files. When installing nagios-www a password for the nagios
 web access user will be generated if needed. The password will be saved in
 clear text in the /etc/nagios/passwd.plaintext file.
 EOF
+
+# cleanup
+rm -f %{buildroot}%{_sysconfdir}/httpd/conf/webapps.d/nagios.conf
 
 %pre
 %{_sbindir}/useradd -r -M -s /bin/sh -d /var/log/nagios -c "system user for %{nsusr}" %{nsusr} >/dev/null 2>&1 || :
@@ -513,7 +515,7 @@ fi
 
 %files www
 %defattr(-,root,root)
-%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/httpd/conf/webapps.d/nagios.conf
+%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/httpd/conf/webapps.d/*_nagios.conf
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/nagios/passwd
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/nagios/group
 %attr(0755,root,root) %{_libdir}/nagios/cgi/*
