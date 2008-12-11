@@ -37,7 +37,7 @@ BuildRequires:  automake1.7
 BuildRequires:	freetype2-devel
 BuildRequires:	freetype-devel
 BuildRequires: 	gd-devel
-BuildRequires:	ImageMagick
+BuildRequires:	imagemagick
 BuildRequires:	jpeg-devel
 BuildRequires:  libtool
 BuildRequires:	multiarch-utils >= 1.0.3
