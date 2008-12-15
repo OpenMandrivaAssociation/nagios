@@ -439,6 +439,20 @@ web access user will be generated if needed. The password will be saved in
 clear text in the /etc/nagios/passwd.plaintext file.
 EOF
 
+%if %mdkversion >= 200900
+# automatic reloading for new plugins
+# (see http://wiki.mandriva.com/en/Rpm_filetriggers)
+install -d %buildroot%{_var}/lib/rpm/filetriggers
+cat > %buildroot%{_var}/lib/rpm/filetriggers/nagios.filter << EOF
+^.%{_sysconfdir}/nagios/plugins.d/.*\.cfg$
+EOF
+cat > %buildroot%{_var}/lib/rpm/filetriggers/nagios.script << EOF
+#!/bin/sh
+/etc/init.d/nagios condrestart
+EOF
+chmod 755 %buildroot%{_var}/lib/rpm/filetriggers/nagios.script
+%endif
+
 %pre
 %{_sbindir}/useradd -r -M -s /bin/sh -d /var/log/nagios -c "system user for %{nsusr}" %{nsusr} >/dev/null 2>&1 || :
 %{_bindir}/gpasswd -a %{cmdusr} %{nsgrp} >/dev/null 2>&1 || :
@@ -516,6 +530,9 @@ fi
 %attr(0755,%{nsusr},%{nsgrp}) %dir /var/run/nagios
 %attr(0755,root,root) %dir %{_libdir}/nagios/plugins/eventhandlers
 %attr(0755,root,root) %{_libdir}/nagios/plugins/eventhandlers/*
+%if %mdkversion >= 200900
+%{_var}/lib/rpm/filetriggers/nagios.*
+%endif
 
 %files www
 %defattr(-,root,root)
