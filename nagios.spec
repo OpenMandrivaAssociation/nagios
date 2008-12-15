@@ -15,7 +15,7 @@ Source1:	%{name}.init
 Source4:	http://nagios.sourceforge.net/download/contrib/misc/mergecfg/mergecfg
 Source5:	favicon.ico
 Source6:	README.Mandriva
-Patch0:		nagios-optflags.diff
+Patch0:		nagios-3.0.6-optflags.diff
 Patch1:		nagios-scandir.diff
 Patch4:		nagios-no_strip.diff
 Patch5:		nagios-mdv_conf.diff
@@ -292,7 +292,7 @@ cat > apache-nagios.conf << EOF
         order deny,allow
         deny from all
         allow from 127.0.0.1
-	ErrorDocument 403 "Access denied per %{_sysconfdir}/httpd/conf/webapps.d/12_nagios.conf"
+	ErrorDocument 403 "Access denied per %{_sysconfdir}/httpd/conf/webapps.d/nagios.conf"
 	AuthType Basic
 	AuthUserFile %{_sysconfdir}/%{name}/passwd
 	AuthGroupFile %{_sysconfdir}/%{name}/group
@@ -308,7 +308,7 @@ cat > apache-nagios.conf << EOF
         order deny,allow
         deny from all
         allow from 127.0.0.1
-	ErrorDocument 403 "Access denied per %{_sysconfdir}/httpd/conf/webapps.d/12_nagios.conf"
+	ErrorDocument 403 "Access denied per %{_sysconfdir}/httpd/conf/webapps.d/nagios.conf"
 	AuthType Basic
 	AuthUserFile %{_sysconfdir}/%{name}/passwd
 	AuthGroupFile %{_sysconfdir}/%{name}/group
@@ -365,7 +365,7 @@ cat > apache-nagios.conf << EOF
 </IfModule>
 
 EOF
-install -m0644 apache-nagios.conf %{buildroot}%{_sysconfdir}/httpd/conf/webapps.d/12_nagios.conf
+install -m0644 apache-nagios.conf %{buildroot}%{_sysconfdir}/httpd/conf/webapps.d/nagios.conf
 
 echo "%{name}:" > %{buildroot}%{_sysconfdir}/nagios/passwd
 echo "%{name}: root %{name}" > %{buildroot}%{_sysconfdir}/nagios/group
@@ -439,9 +439,6 @@ web access user will be generated if needed. The password will be saved in
 clear text in the /etc/nagios/passwd.plaintext file.
 EOF
 
-# cleanup
-rm -f %{buildroot}%{_sysconfdir}/httpd/conf/webapps.d/nagios.conf
-
 %pre
 %{_sbindir}/useradd -r -M -s /bin/sh -d /var/log/nagios -c "system user for %{nsusr}" %{nsusr} >/dev/null 2>&1 || :
 %{_bindir}/gpasswd -a %{cmdusr} %{nsgrp} >/dev/null 2>&1 || :
@@ -460,6 +457,13 @@ if [ "$1" -ge "1" ]; then
     %{_initrddir}/%{name} condrestart >/dev/null 2>&1 || :
 fi	
 %_postun_userdel %{nsusr}
+
+%pretrans www
+# fix for old apache configuration
+if [ -f %{_sysconfdir}/httpd/conf/webapps.d/12_nagios.conf ]; then
+    mv %{_sysconfdir}/httpd/conf/webapps.d/12_nagios.conf \
+    %{_sysconfdir}/httpd/conf/webapps.d/nagios.conf
+fi
 
 %post www
 if [ -f /var/lock/subsys/httpd ]; then
@@ -515,7 +519,7 @@ fi
 
 %files www
 %defattr(-,root,root)
-%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/httpd/conf/webapps.d/*_nagios.conf
+%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/httpd/conf/webapps.d/nagios.conf
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/nagios/passwd
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/nagios/group
 %attr(0755,root,root) %{_libdir}/nagios/cgi/*
