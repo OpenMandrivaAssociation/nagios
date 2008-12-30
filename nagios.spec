@@ -267,8 +267,10 @@ pushd contrib
 	install
 popd
 
-# fix strange dir perms
+# fix strange perms
 find %{buildroot}%{_datadir}/nagios -type d | xargs chmod 755
+find %{buildroot}%{_datadir}/nagios/www -type f | xargs chmod 644
+find %{buildroot}%{_libdir}/nagios/cgi -type f | xargs chmod 755
 
 # fix default config
 perl -p -i -e "s|=/var/log/nagios/rw/|=/var/spool/nagios/|g" %{buildroot}%{_sysconfdir}/nagios/*
