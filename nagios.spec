@@ -47,10 +47,8 @@ BuildRequires:	png-devel
 BuildRequires:	X11-devel
 BuildRequires:	xpm-devel
 BuildRequires:	zlib-devel
-# use this when embedded perl works in nagios
-#Requires:	libgdbm2
-#BuildRequires: 	libgdbm2-devel
-#BuildRequires: 	perl-devel
+BuildRequires: 	gdbm-devel
+BuildRequires: 	perl-devel
 Obsoletes:	netsaint
 Provides:	netsaint
 Epoch:		1
@@ -194,11 +192,9 @@ export FFLAGS="$FFLAGS -fPIC"
     --with-template-extinfo \
     --with-template-objects \
     --with-gd-lib=%{_libdir} \
-    --with-gd-inc=%{_includedir}
-
-# use this when embedded perl works in nagios
-#    --enable-embedded-perl \
-#    --with-perlcache \
+    --with-gd-inc=%{_includedir} \
+    --enable-embedded-perl \
+    --with-perlcache
 
 # bug
 perl -pi -e "s|/var/log/nagios/spool/checkresults|/var/spool/nagios/checkresults|g" include/locations.h
