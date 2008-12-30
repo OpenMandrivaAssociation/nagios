@@ -6,7 +6,7 @@
 Summary:	Host/service/network monitoring program
 Name:		nagios
 Version:	3.0.6
-Release:	%mkrel 2
+Release:	%mkrel 3
 License:	GPLv2
 Group:		Networking/Other
 URL:		http://www.nagios.org/
@@ -234,7 +234,7 @@ make \
     CFGDIR=%{_sysconfdir}/nagios \
     CGIDIR=%{_libdir}/nagios/cgi \
     COMMAND_OPTS="" \
-    HTMLDIR=%{_datadir}/nagios \
+    HTMLDIR=%{_datadir}/nagios/www \
     INIT_OPTS="" \
     INSTALL=install \
     INSTALL_OPTS="" \
@@ -259,7 +259,7 @@ pushd contrib
 	CFGDIR=%{_sysconfdir}/nagios \
 	CGIDIR=%{_libdir}/nagios/cgi \
 	COMMAND_OPTS="" \
-	HTMLDIR=%{_datadir}/nagios \
+	HTMLDIR=%{_datadir}/nagios/www \
 	INIT_OPTS="" \
 	INSTALL=install \
 	INSTALL_OPTS="" \
@@ -301,9 +301,9 @@ cat > apache-nagios.conf << EOF
 	Satisfy Any
     </Directory>
 
-    Alias /%{name} %{_datadir}/%{name}
+    Alias /%{name} %{_datadir}/%{name}/www
 
-    <Directory %{_datadir}/%{name}>
+    <Directory %{_datadir}/%{name}/www>
         Options None
         order deny,allow
         deny from all
@@ -338,9 +338,9 @@ cat > apache-nagios.conf << EOF
 	Satisfy Any
     </Directory>
 
-    Alias /%{name} %{_datadir}/%{name}
+    Alias /%{name} %{_datadir}/%{name}/www
 
-    <Directory %{_datadir}/%{name}>
+    <Directory %{_datadir}/%{name}/www>
 	Options None
 	SSLRequireSSL
 	Order Deny,Allow
@@ -429,7 +429,7 @@ EOF
 %multiarch_includes %{buildroot}%{_includedir}/nagios/locations.h
 
 # install the favicon.ico
-install -m0644 favicon.ico %{buildroot}%{_datadir}/nagios/
+install -m0644 favicon.ico %{buildroot}%{_datadir}/nagios/www
 
 cat > README.urpmi << EOF
 The previous minimalistic config files is not needed anymore since nagios-2.6
@@ -477,6 +477,8 @@ fi
 if [ -f %{_sysconfdir}/httpd/conf/webapps.d/12_nagios.conf ]; then
     mv %{_sysconfdir}/httpd/conf/webapps.d/12_nagios.conf \
     %{_sysconfdir}/httpd/conf/webapps.d/nagios.conf
+    perl -pi -e 's|%{_datadir}/%{name}|%{_datadir}/%{name}/www|' \
+        %{_sysconfdir}/httpd/conf/webapps.d/nagios.conf
 fi
 
 %post www
@@ -539,18 +541,16 @@ fi
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/httpd/conf/webapps.d/nagios.conf
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/nagios/passwd
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/nagios/group
-%attr(0755,root,root) %{_libdir}/nagios/cgi/*
-#%attr(-,root,root) %{_datadir}/nagios
-%attr(-,root,root) %dir %{_libdir}/nagios/cgi
-%attr(-,root,root) %dir %{_datadir}/nagios
-%attr(-,root,root) %dir %{_datadir}/nagios/images
-%attr(-,root,root) %dir %{_datadir}/nagios/stylesheets
-%{_datadir}/nagios/favicon.ico
-%{_datadir}/nagios/robots.txt
-%{_datadir}/nagios/contexthelp
-%{_datadir}/nagios/docs
-%{_datadir}/nagios/media
-%{_datadir}/nagios/ssi
+%{_libdir}/nagios/cgi
+%attr(-,root,root) %dir %{_datadir}/nagios/www
+%attr(-,root,root) %dir %{_datadir}/nagios/www/images
+%attr(-,root,root) %dir %{_datadir}/nagios/www/stylesheets
+%{_datadir}/nagios/www/favicon.ico
+%{_datadir}/nagios/www/robots.txt
+%{_datadir}/nagios/www/contexthelp
+%{_datadir}/nagios/www/docs
+%{_datadir}/nagios/www/media
+%{_datadir}/nagios/www/ssi
 %if %mdkversion == 200600
 %{_menudir}/%{name}
 %endif
@@ -561,9 +561,9 @@ fi
 
 %files theme-default
 %defattr(644,root,root,755)
-%{_datadir}/nagios/*.html
-%{_datadir}/nagios/images/*
-%{_datadir}/nagios/stylesheets/*
+%{_datadir}/nagios/www/*.html
+%{_datadir}/nagios/www/images/*
+%{_datadir}/nagios/www/stylesheets/*
 
 %files devel
 %defattr(-,root,root)
