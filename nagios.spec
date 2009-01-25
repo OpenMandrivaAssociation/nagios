@@ -5,8 +5,8 @@
 
 Summary:	Host/service/network monitoring program
 Name:		nagios
-Version:	3.0.6
-Release:	%mkrel 3
+Version:	3.1.0
+Release:	%mkrel 1
 License:	GPLv2
 Group:		Networking/Other
 URL:		http://www.nagios.org/
@@ -20,6 +20,8 @@ Patch1:		nagios-scandir.diff
 Patch4:		nagios-no_strip.diff
 Patch5:		nagios-mdv_conf.diff
 Patch6:		nagios-DESTDIR.diff
+Patch7:		nagios-3.1.0-format_not_a_string_literal_and_no_format_arguments.diff
+Patch8:		nagios-3.1.0-no_update_check_per_default_please.diff
 Requires(post): rpm-helper nagios-conf
 Requires(preun): rpm-helper nagios-conf
 Requires(pre): rpm-helper apache-conf
@@ -104,6 +106,9 @@ interface. In addition, HTML documentation is included in this package
 %package	theme-default
 Summary:	Default Nagios theme
 Group:		Networking/WWW
+Requires(pre): rpm-helper apache-mod_php
+Requires(postun): rpm-helper apache-mod_php
+Requires:	apache-mod_php
 Requires:	nagios-www = %{epoch}:%{version}-%{release}
 Provides:	nagios-theme
 Conflicts:	nagios-theme-nuvola
@@ -142,6 +147,8 @@ done
 %patch4 -p0
 %patch5 -p0
 %patch6 -p0
+%patch7 -p0
+%patch8 -p1
 
 cp %{SOURCE1} nagios.init
 cp %{SOURCE4} mergecfg
@@ -210,7 +217,7 @@ pushd contrib
 popd
 
 %install
-[ -n "%{buildroot}" -a "%{buildroot}" != / ] && rm -rf %{buildroot}
+rm -rf %{buildroot}
 
 # don't fiddle with the initscript!
 export DONT_GPRINTIFY=1
@@ -507,7 +514,7 @@ fi
 %endif
 
 %clean
-[ -n "%{buildroot}" -a "%{buildroot}" != / ] && rm -rf %{buildroot}
+rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
@@ -560,8 +567,9 @@ fi
 
 %files theme-default
 %defattr(644,root,root,755)
-%{_datadir}/nagios/www/*.html
+%{_datadir}/nagios/www/*.php
 %{_datadir}/nagios/www/images/*
+%{_datadir}/nagios/www/includes/*
 %{_datadir}/nagios/www/stylesheets/*
 
 %files devel
