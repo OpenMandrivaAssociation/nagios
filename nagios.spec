@@ -276,8 +276,13 @@ find %{buildroot}%{_datadir}/nagios/www -type f | xargs chmod 644
 find %{buildroot}%{_libdir}/nagios/cgi -type f | xargs chmod 755
 
 # fix default config
-perl -pi -e "s|=/var/log/nagios/rw/|=/var/spool/nagios/|g" \
+perl -pi \
+    -e "s|=/var/log/nagios/rw/|=/var/spool/nagios/|g" \
     %{buildroot}%{_sysconfdir}/nagios/*.cfg
+perl -pi \
+    -e "s|^physical_html_path=.*|physical_html_path=%{_datadir}/nagios/www|g" \
+    %{buildroot}%{_sysconfdir}/nagios/cgi.cfg
+
 
 # install simplified init script
 install -m0755 nagios.init %{buildroot}%{_initrddir}/nagios
