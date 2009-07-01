@@ -9,7 +9,7 @@ Version:	3.1.2
 %if %mdkversion < 201000
 %define subrel  1
 %endif
-Release:	%mkrel 0
+Release:	%mkrel 1
 License:	GPLv2
 Group:		Networking/Other
 URL:		http://www.nagios.org/
