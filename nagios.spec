@@ -17,7 +17,6 @@ Source0:	http://prdownloads.sourceforge.net/nagios/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source4:	http://nagios.sourceforge.net/download/contrib/misc/mergecfg/mergecfg
 Source5:	favicon.ico
-Source6:	README.Mandriva
 Patch1:		nagios-scandir.diff
 Patch5:		nagios-mdv_conf.diff
 Patch6:		nagios-DESTDIR.diff
@@ -137,7 +136,6 @@ compile against.
 cp %{SOURCE1} nagios.init
 cp %{SOURCE4} mergecfg
 cp %{SOURCE5} favicon.ico
-cp %{SOURCE6} README.Mandriva
 
 %build
 %serverbuild
@@ -333,10 +331,148 @@ EOF
 # install the favicon.ico
 install -m0644 favicon.ico %{buildroot}%{_datadir}/nagios/www
 
-cat > README.urpmi << EOF
-The previous minimalistic config files is not needed anymore since nagios-2.6
-works out of the box now. You will have to manually merge any changes you have
-made in the config files.
+cat > README.mdv << EOF
+Mandriva Nagios package
+
+The default configuration that used to come with this package now lives in the
+nagios-conf package. You can easily adapt the nagios-conf package to suit your
+specific taste. You may want to adjust the cgi.cfg, nagios.cfg and resource.cfg
+configuration files found in the /etc/nagios directory.
+
+The old nagios-plugins package used to come with all plugins in one single
+package has been broken out into multiple sub packages. As of today Jan 14 2008
+there are over 100 nagios plugins to your disposal. Here is a list of plugins 
+you can install that stems from the nagios-plugins source:
+
+ o nagios-check_adptraid
+ o nagios-check_apache
+ o nagios-check_apc_ups
+ o nagios-check_appletalk
+ o nagios-check_apt
+ o nagios-check_arping
+ o nagios-check_asterisk
+ o nagios-check_axis
+ o nagios-check_backup
+ o nagios-check_bgp
+ o nagios-check_bgpstate
+ o nagios-check_breeze
+ o nagios-check_by_ssh
+ o nagios-check_ciscotemp
+ o nagios-check_cluster
+ o nagios-check_cluster2
+ o nagios-check_compaq_insight
+ o nagios-check_dhcp
+ o nagios-check_dig
+ o nagios-check_digitemp
+ o nagios-check_disk
+ o nagios-check_disk_smb
+ o nagios-check_dlswcircuit
+ o nagios-check_dns
+ o nagios-check_dns_random
+ o nagios-check_dummy
+ o nagios-check_email_loop
+ o nagios-check_file_age
+ o nagios-check_flexlm
+ o nagios-check_fping
+ o nagios-check_frontpage
+ o nagios-check_game
+ o nagios-check_hpjd
+ o nagios-check_hprsc
+ o nagios-check_http
+ o nagios-check_hw
+ o nagios-check_ica_master_browser
+ o nagios-check_ica_metaframe_pub_apps
+ o nagios-check_ica_program_neigbourhood
+ o nagios-check_icmp
+ o nagios-check_ide_smart
+ o nagios-check_ifoperstatus
+ o nagios-check_ifstatus
+ o nagios-check_inodes
+ o nagios-check_ipxping
+ o nagios-check_ircd
+ o nagios-check_javaproc
+ o nagios-check_ldap
+ o nagios-check_linux_raid
+ o nagios-check_load
+ o nagios-check_log
+ o nagios-check_log2
+ o nagios-check_lotus
+ o nagios-check_mailq
+ o nagios-check_maxchannels
+ o nagios-check_maxwanstate
+ o nagios-check_mem
+ o nagios-check_mrtg
+ o nagios-check_mrtgext
+ o nagios-check_mrtgtraf
+ o nagios-check_ms_spooler
+ o nagios-check_mssql
+ o nagios-check_mysql
+ o nagios-check_mysql_perf <- added from third part
+ o nagios-check_mysql_query
+ o nagios-check_nagios
+ o nagios-check_netapp
+ o nagios-check_nmap
+ o nagios-check_nt
+ o nagios-check_ntp
+ o nagios-check_ntp_peer
+ o nagios-check_ntp_time
+ o nagios-check_nwstat
+ o nagios-check_oracle
+ o nagios-check_overcr
+ o nagios-check_pcpmetric
+ o nagios-check_pfstate
+ o nagios-check_pgsql
+ o nagios-check_ping
+ o nagios-check_procs
+ o nagios-check_qmailq
+ o nagios-check_radius
+ o nagios-check_rbl
+ o nagios-check_real
+ o nagios-check_remote_nagios_status
+ o nagios-check_rpc
+ o nagios-check_sendim
+ o nagios-check_sensors
+ o nagios-check_smart
+ o nagios-check_smb
+ o nagios-check_smtp
+ o nagios-check_snmp
+ o nagios-check_snmp_disk_monitor
+ o nagios-check_snmp_printer
+ o nagios-check_snmp_process_monitor
+ o nagios-check_snmp_procs
+ o nagios-check_sockets
+ o nagios-check_ssh
+ o nagios-check_swap
+ o nagios-check_tcp
+ o nagios-check_time
+ o nagios-check_timeout
+ o nagios-check_traceroute
+ o nagios-check_ups
+ o nagios-check_uptime
+ o nagios-check_users
+ o nagios-check_wave
+ o nagios-check_wins
+
+This break-out has been done to reduce the overall dependencies requirements, 
+so if you don't need any of the check_mysql_* plugins you won't have to install
+the mysql libraries, and so on.
+
+Each of these packages comes with its own configuration file that contains the
+needed command definition(s), let's give an example:
+
+$ cat /etc/nagios/plugins.d/check_arping.cfg
+# this plugin require suid bit. chmod 4550 /usr/lib64/nagios/plugins/contrib/check_arping.pl
+
+# 'check_arping' command definition
+define command{
+	command_name    check_arping
+	command_line    /usr/lib64/nagios/plugins/contrib/check_arping.pl -I $ARG1$ -H $HOSTADDRESS$
+	}
+
+
+So when you start the nagios daemon it will automatically load configuration
+files found in the /etc/nagios/plugins.d and /etc/nagios/conf.d directories.
+
 EOF
 
 %if %mdkversion >= 200900
@@ -404,7 +540,8 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%doc Changelog INSTALLING LEGAL README* UPGRADING README.urpmi sample-config/mrtg.cfg
+%doc Changelog INSTALLING LEGAL README UPGRADING README.mdv
+%doc sample-config/mrtg.cfg
 %{_initrddir}/nagios
 %{_sbindir}/*
 %dir %{_sysconfdir}/nagios
