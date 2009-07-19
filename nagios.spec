@@ -29,14 +29,7 @@ Requires(pre): rpm-helper apache-conf
 Requires(postun): rpm-helper apache-conf
 Requires:	apache-conf
 Requires:	nagios-conf
-Requires:	coreutils
-Requires:	gawk
-Requires:	grep
 Requires:	nagios-plugins
-Requires:	perl
-Requires:	shadow-utils
-BuildRequires:  autoconf2.5
-BuildRequires:  automake1.7
 BuildRequires:	freetype2-devel
 BuildRequires:	freetype-devel
 BuildRequires: 	gd-devel
