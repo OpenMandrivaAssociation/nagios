@@ -135,14 +135,6 @@ compile against.
 %prep
 %setup -q
 
-find . -type d -perm 0700 -exec chmod 755 {} \;
-find . -type f -perm 0555 -exec chmod 755 {} \;
-find . -type f -perm 0444 -exec chmod 644 {} \;
-
-for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type f -name .#\*`; do
-    if [ -e "$i" ]; then rm -rf $i; fi >&/dev/null
-done
-
 %patch1 -p0
 %patch5 -p0
 %patch6 -p0
