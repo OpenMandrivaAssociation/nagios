@@ -315,20 +315,6 @@ convert html/images/logofullsize.png -resize 16x16  %{buildroot}%{_miconsdir}/%{
 convert html/images/logofullsize.png -resize 32x32  %{buildroot}%{_iconsdir}/%{name}.png
 convert html/images/logofullsize.png -resize 48x48  %{buildroot}%{_liconsdir}/%{name}.png
 
-%if %mdkversion == 200600
-# install menu entry.
-install -d %{buildroot}%{_menudir}
-cat > %{buildroot}%{_menudir}/%{name} << EOF
-?package(%{name}): \
-needs=X11 \
-section=System/Monitoring \
-title="Nagios" \
-longtitle="%{summary}" \
-command="%{_bindir}/www-browser http://localhost/%{name}/" \
-icon="%{name}.png"
-EOF
-%endif
-
 # XDG menu
 install -d %{buildroot}%{_datadir}/applications
 cat > %{buildroot}%{_datadir}/applications/mandriva-%{name}.desktop << EOF
@@ -455,9 +441,6 @@ rm -rf %{buildroot}
 %{_datadir}/nagios/www/docs
 %{_datadir}/nagios/www/media
 %{_datadir}/nagios/www/ssi
-%if %mdkversion == 200600
-%{_menudir}/%{name}
-%endif
 %{_iconsdir}/%{name}.png
 %{_miconsdir}/%{name}.png
 %{_liconsdir}/%{name}.png
