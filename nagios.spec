@@ -419,36 +419,36 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root)
 %doc Changelog INSTALLING LEGAL README* UPGRADING README.urpmi sample-config/mrtg.cfg
-%attr(0755,root,root) %{_initrddir}/nagios
-%attr(0755,root,root) %{_sbindir}/*
-%attr(0755,root,root) %dir %{_sysconfdir}/nagios
-%attr(0644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/nagios/*.cfg
-%attr(0755,root,root) %dir %{_sysconfdir}/nagios/servers
-%attr(0755,root,root) %dir %{_sysconfdir}/nagios/printers
-%attr(0755,root,root) %dir %{_sysconfdir}/nagios/switches
-%attr(0755,root,root) %dir %{_sysconfdir}/nagios/routers
-%attr(0755,root,root) %dir %{_sysconfdir}/nagios/conf.d
-%attr(0755,root,root) %dir %{_sysconfdir}/nagios/plugins.d
-%attr(0755,root,root) %dir %{_sysconfdir}/nagios/objects
-%attr(0644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/nagios/objects/*.cfg
-%attr(0755,%{nsusr},%{nsgrp}) %dir /var/log/nagios
-%attr(0755,%{nsusr},%{nsgrp}) %dir /var/log/nagios/archives
+%{_initrddir}/nagios
+%{_sbindir}/*
+%dir %{_sysconfdir}/nagios
+%config(noreplace) %{_sysconfdir}/nagios/*.cfg
+%dir %{_sysconfdir}/nagios/servers
+%dir %{_sysconfdir}/nagios/printers
+%dir %{_sysconfdir}/nagios/switches
+%dir %{_sysconfdir}/nagios/routers
+%dir %{_sysconfdir}/nagios/conf.d
+%dir %{_sysconfdir}/nagios/plugins.d
+%dir %{_sysconfdir}/nagios/objects
+%config(noreplace) %{_sysconfdir}/nagios/objects/*.cfg
+%attr(-,%{nsusr},%{nsgrp}) %dir /var/log/nagios
+%attr(-,%{nsusr},%{nsgrp}) %dir /var/log/nagios/archives
 %attr(2775,%{nsusr},%{cmdgrp}) %dir /var/spool/nagios
-%attr(0755,%{nsusr},%{nsgrp}) %dir /var/spool/nagios/checkresults
-%attr(0755,%{nsusr},%{nsgrp}) %dir /var/run/nagios
-%attr(0755,root,root) %dir %{_libdir}/nagios/plugins/eventhandlers
-%attr(0755,root,root) %{_libdir}/nagios/plugins/eventhandlers/*
+%attr(-,%{nsusr},%{nsgrp}) %dir /var/spool/nagios/checkresults
+%attr(-,%{nsusr},%{nsgrp}) %dir /var/run/nagios
+%dir %{_libdir}/nagios/plugins/eventhandlers
+%{_libdir}/nagios/plugins/eventhandlers/*
 %if %mdkversion >= 200900
 %{_var}/lib/rpm/filetriggers/nagios.*
 %endif
 
 %files www
 %defattr(-,root,root)
-%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/httpd/conf/webapps.d/nagios.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf/webapps.d/nagios.conf
 %{_libdir}/nagios/cgi
-%attr(-,root,root) %dir %{_datadir}/nagios/www
-%attr(-,root,root) %dir %{_datadir}/nagios/www/images
-%attr(-,root,root) %dir %{_datadir}/nagios/www/stylesheets
+%dir %{_datadir}/nagios/www
+%dir %{_datadir}/nagios/www/images
+%dir %{_datadir}/nagios/www/stylesheets
 %{_datadir}/nagios/www/favicon.ico
 %{_datadir}/nagios/www/robots.txt
 %{_datadir}/nagios/www/contexthelp
@@ -464,7 +464,7 @@ rm -rf %{buildroot}
 %{_datadir}/applications/*.desktop
 
 %files theme-default
-%defattr(644,root,root,755)
+%defattr(-,root,root)
 %{_datadir}/nagios/www/*.php
 %{_datadir}/nagios/www/images/*
 %{_datadir}/nagios/www/includes/*
