@@ -205,8 +205,7 @@ perl -pi -e "s|/var/log/nagios/spool/checkresults|/var/spool/nagios/checkresults
 pushd contrib
     make daemonchk.cgi
     make traceroute.cgi
-# use this when embedded perl works in nagios
-#    make mini_epn
+    make mini_epn
     make convertcfg
 popd
 
