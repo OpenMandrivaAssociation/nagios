@@ -266,96 +266,25 @@ install -m0755 nagios.init %{buildroot}%{_initrddir}/nagios
 # install the mergecfg script
 install -m0755 mergecfg %{buildroot}%{_sbindir}/nagios-mergecfg
 
-# fix web access
-cat > apache-nagios.conf << EOF
-# WITHOUT SSL
+# apache configuration
+install -d -m 755 %{buildroot}%{_webappconfdir}
+cat > %{buildroot}%{_webappconfdir}/%{name}.conf <<EOF
+# Nagios Apache configuration
 
-<IfModule !mod_ssl.c>
 
-    ScriptAlias /%{name}/cgi-bin %{_libdir}/%{name}/cgi
+ScriptAlias /%{name}/cgi-bin %{_libdir}/%{name}/cgi
 
-    <Directory %{_libdir}/%{name}/cgi>
-        Options ExecCGI
-        order deny,allow
-        deny from all
-        allow from 127.0.0.1
-	ErrorDocument 403 "Access denied per %{_sysconfdir}/httpd/conf/webapps.d/nagios.conf"
-	AuthType Basic
-	AuthUserFile %{_sysconfdir}/%{name}/passwd
-	AuthGroupFile %{_sysconfdir}/%{name}/group
-	AuthName "Nagios Access"
-	Require group nagios
-	Satisfy Any
-    </Directory>
+<Directory %{_libdir}/%{name}/cgi>
+    Options ExecCGI
+    Allow from all
+</Directory>
 
-    Alias /%{name} %{_datadir}/%{name}/www
+Alias /%{name} %{_datadir}/%{name}/www
 
-    <Directory %{_datadir}/%{name}/www>
-        Options None
-        order deny,allow
-        deny from all
-        allow from 127.0.0.1
-	ErrorDocument 403 "Access denied per %{_sysconfdir}/httpd/conf/webapps.d/nagios.conf"
-	AuthType Basic
-	AuthUserFile %{_sysconfdir}/%{name}/passwd
-	AuthGroupFile %{_sysconfdir}/%{name}/group
-	AuthName "Nagios Access"
-	Require group nagios
-	Satisfy Any
-    </Directory>
-
-</IfModule>
-
-# WITH SSL ENABLED
-
-<IfModule mod_ssl.c>
-
-    ScriptAlias /%{name}/cgi-bin %{_libdir}/%{name}/cgi
-
-    <Directory %{_libdir}/%{name}/cgi>
-	Options ExecCGI
-	SSLRequireSSL
-	Order Deny,Allow
-	Deny from all
-	AuthType Basic
-	AuthUserFile %{_sysconfdir}/%{name}/passwd
-	AuthGroupFile %{_sysconfdir}/%{name}/group
-	AuthName "Nagios Access"
-	Require group nagios
-	Satisfy Any
-    </Directory>
-
-    Alias /%{name} %{_datadir}/%{name}/www
-
-    <Directory %{_datadir}/%{name}/www>
-	Options None
-	SSLRequireSSL
-	Order Deny,Allow
-	Deny from all
-	AuthType Basic
-	AuthUserFile %{_sysconfdir}/%{name}/passwd
-	AuthGroupFile %{_sysconfdir}/%{name}/group
-	AuthName "Nagios Access"
-	Require group nagios
-	Satisfy Any
-    </Directory>
-
-# Uncomment the following lines to force a redirect to a working
-# SSL aware apache server. This serves as an example.
-#    <LocationMatch /%{name}>
-#	Options FollowSymLinks
-#	RewriteEngine on
-#	RewriteCond %{SERVER_PORT} !^443$
-#	RewriteRule ^.*$ https://%{SERVER_NAME}%{REQUEST_URI} [L,R]
-#    </LocationMatch>
-
-</IfModule>
-
+<Directory %{_datadir}/%{name}/www>
+    Allow from all
+</Directory>
 EOF
-install -m0644 apache-nagios.conf %{buildroot}%{_sysconfdir}/httpd/conf/webapps.d/nagios.conf
-
-echo "%{name}:" > %{buildroot}%{_sysconfdir}/nagios/passwd
-echo "%{name}: root %{name}" > %{buildroot}%{_sysconfdir}/nagios/group
 
 # install and fix event handlers
 install -m0755 contrib/eventhandlers/disable_active_service_checks %{buildroot}%{_libdir}/nagios/plugins/eventhandlers/
@@ -421,9 +350,7 @@ install -m0644 favicon.ico %{buildroot}%{_datadir}/nagios/www
 cat > README.urpmi << EOF
 The previous minimalistic config files is not needed anymore since nagios-2.6
 works out of the box now. You will have to manually merge any changes you have
-made in the config files. When installing nagios-www a password for the nagios
-web access user will be generated if needed. The password will be saved in
-clear text in the /etc/nagios/passwd.plaintext file.
+made in the config files.
 EOF
 
 %if %mdkversion >= 200900
@@ -476,14 +403,6 @@ fi
 %update_menus
 %endif
 
-if [ -z "`cat %{_sysconfdir}/%{name}/passwd|cut -d: -f2`" ]; then
-    echo "Setting a unique password for the %{name} web user. As root look in the %{_sysconfdir}/%{name}/passwd.plaintext file to view it."
-    PASSWORD=`perl -e 'for ($i = 0, $bit = "!", $key = ""; $i < 8; $i++) {while ($bit !~ /^[0-9A-Za-z]$/) { $bit = chr(rand(90) + 32); } $key .= $bit; $bit = "!"; } print "$key";'`
-    %{_sbindir}/htpasswd -b %{_sysconfdir}/%{name}/passwd %{name} $PASSWORD
-    echo "$PASSWORD" > %{_sysconfdir}/%{name}/passwd.plaintext
-    chmod 600 %{_sysconfdir}/%{name}/passwd.plaintext
-fi
-
 %postun www
 if [ "$1" = "0" ]; then
     if [ -f /var/lock/subsys/httpd ]; then
@@ -526,8 +445,6 @@ rm -rf %{buildroot}
 %files www
 %defattr(-,root,root)
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/httpd/conf/webapps.d/nagios.conf
-%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/nagios/passwd
-%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/nagios/group
 %{_libdir}/nagios/cgi
 %attr(-,root,root) %dir %{_datadir}/nagios/www
 %attr(-,root,root) %dir %{_datadir}/nagios/www/images
