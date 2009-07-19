@@ -18,9 +18,7 @@ Source1:	%{name}.init
 Source4:	http://nagios.sourceforge.net/download/contrib/misc/mergecfg/mergecfg
 Source5:	favicon.ico
 Source6:	README.Mandriva
-Patch0:		nagios-3.0.6-optflags.diff
 Patch1:		nagios-scandir.diff
-Patch4:		nagios-no_strip.diff
 Patch5:		nagios-mdv_conf.diff
 Patch6:		nagios-DESTDIR.diff
 Patch7:		nagios-3.1.0-format_not_a_string_literal_and_no_format_arguments.diff
@@ -145,9 +143,7 @@ for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type 
     if [ -e "$i" ]; then rm -rf $i; fi >&/dev/null
 done
 
-%patch0 -p1
 %patch1 -p0
-%patch4 -p0
 %patch5 -p0
 %patch6 -p0
 %patch7 -p0
@@ -159,11 +155,6 @@ cp %{SOURCE5} favicon.ico
 cp %{SOURCE6} README.Mandriva
 
 %build
-export WANT_AUTOCONF_2_5=1
-rm -f configure; touch missing
-libtoolize --copy --force; aclocal-1.7; autoconf
-#; automake --add-missing
-
 %serverbuild
 
 export CFLAGS="$CFLAGS -fPIC"
@@ -245,6 +236,7 @@ make \
     INSTALL=install \
     INSTALL_OPTS="" \
     LOGDIR=/var/log/nagios \
+    STRIP=/bin/true \
     install \
     install-html \
     install-commandmode \
