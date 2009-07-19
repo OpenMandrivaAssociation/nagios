@@ -213,9 +213,6 @@ popd
 %install
 rm -rf %{buildroot}
 
-# don't fiddle with the initscript!
-export DONT_GPRINTIFY=1
-
 install -d -m0755 %{buildroot}%{_sysconfdir}/httpd/conf/webapps.d
 install -d -m0755 %{buildroot}/var/spool/nagios/checkresults
 install -d -m0755 %{buildroot}/var/run/nagios
