@@ -9,7 +9,7 @@ Version:	3.2.0
 %if %mdkversion < 201000
 %define subrel  1
 %endif
-Release:	%mkrel 3
+Release:	%mkrel 4
 License:	GPLv2
 Group:		Networking/Other
 URL:		http://www.nagios.org/
@@ -274,13 +274,15 @@ ScriptAlias /%{name}/cgi-bin %{_libdir}/%{name}/cgi
 
 <Directory %{_libdir}/%{name}/cgi>
     Options ExecCGI
-    Allow from all
+    Order allow,deny
+    Allow from localhost
 </Directory>
 
 Alias /%{name} %{_datadir}/%{name}/www
 
 <Directory %{_datadir}/%{name}/www>
-    Allow from all
+    Order allow,deny
+    Allow from localhost
 </Directory>
 EOF
 
