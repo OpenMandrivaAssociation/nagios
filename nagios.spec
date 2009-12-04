@@ -9,7 +9,7 @@ Version:	3.2.0
 %if %mdkversion < 201000
 %define subrel  1
 %endif
-Release:	%mkrel 4
+Release:	%mkrel 5
 License:	GPLv2
 Group:		Networking/Other
 URL:		http://www.nagios.org/
@@ -274,15 +274,21 @@ ScriptAlias /%{name}/cgi-bin %{_libdir}/%{name}/cgi
 
 <Directory %{_libdir}/%{name}/cgi>
     Options ExecCGI
+
     Order allow,deny
-    Allow from localhost
+    Allow from 127.0.0.1
+    Deny from all
+    ErrorDocument 403 "Access denied per %{_webappconfdir}/%{name}.conf"
 </Directory>
 
 Alias /%{name} %{_datadir}/%{name}/www
 
 <Directory %{_datadir}/%{name}/www>
     Order allow,deny
-    Allow from localhost
+    Allow from 127.0.0.1
+    Deny from all
+    ErrorDocument 403 "Access denied per %{_webappconfdir}/%{name}.conf"
+    Order allow,deny
 </Directory>
 EOF
 
