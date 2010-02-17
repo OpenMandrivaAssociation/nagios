@@ -67,21 +67,18 @@ packages
 %package	www
 Summary:	Provides the HTML and CGI files for the Nagios web interface
 Group:		Networking/WWW
-Requires(post): rpm-helper
-Requires(preun): rpm-helper
-Requires(pre): rpm-helper apache-mpm-prefork
-Requires(postun): rpm-helper apache-mpm-prefork
-Requires(post): %{name} = %{epoch}:%{version}-%{release}
-Requires(preun): %{name} = %{epoch}:%{version}-%{release}
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	apache-mpm-prefork
+Requires:	webserver
 Requires:	freetype
 Requires:	freetype2
 Requires:	nail
-Requires:	perl
 Requires:	traceroute
 Requires:	%{name}-imagepaks
 Requires:	%{name}-theme
+%if %mdkversion < 201010
+Requires(post):   rpm-helper
+Requires(postun):   rpm-helper
+%endif
 Epoch:		%{epoch}
 
 %description	www
@@ -269,26 +266,19 @@ install -d -m 755 %{buildroot}%{_webappconfdir}
 cat > %{buildroot}%{_webappconfdir}/%{name}.conf <<EOF
 # Nagios Apache configuration
 
-
 ScriptAlias /%{name}/cgi-bin %{_libdir}/%{name}/cgi
 
 <Directory %{_libdir}/%{name}/cgi>
-    Options ExecCGI
-
     Order allow,deny
-    Allow from 127.0.0.1
-    Deny from all
-    ErrorDocument 403 "Access denied per %{_webappconfdir}/%{name}.conf"
+    Allow from all
+    Options ExecCGI
 </Directory>
 
 Alias /%{name} %{_datadir}/%{name}/www
 
 <Directory %{_datadir}/%{name}/www>
     Order allow,deny
-    Allow from 127.0.0.1
-    Deny from all
-    ErrorDocument 403 "Access denied per %{_webappconfdir}/%{name}.conf"
-    Order allow,deny
+    Allow from all
 </Directory>
 EOF
 
@@ -526,19 +516,17 @@ if [ -f %{_sysconfdir}/httpd/conf/webapps.d/12_nagios.conf ]; then
 fi
 
 %post www
-if [ -f /var/lock/subsys/httpd ]; then
-    %{_initrddir}/httpd restart >/dev/null 2>&1 || :
-fi
+%if %mdkversion < 201010
+%_post_webapp
+%endif
 %if %mdkversion < 200900
 %update_menus
 %endif
 
 %postun www
-if [ "$1" = "0" ]; then
-    if [ -f /var/lock/subsys/httpd ]; then
-        %{_initrddir}/httpd restart >/dev/null 2>&1 || :
-    fi
-fi
+%if %mdkversion < 201010
+%_postun_webapp
+%endif
 %if %mdkversion < 200900
 %clean_menus
 %endif
