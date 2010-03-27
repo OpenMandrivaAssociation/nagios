@@ -5,11 +5,11 @@
 
 Summary:	Host/service/network monitoring program
 Name:		nagios
-Version:	3.2.0
+Version:	3.2.1
 %if %mdkversion < 201000
 %define subrel  1
 %endif
-Release:	%mkrel 7
+Release:	%mkrel 1
 License:	GPLv2
 Group:		Networking/Other
 URL:		http://www.nagios.org/
