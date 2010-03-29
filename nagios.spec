@@ -244,7 +244,9 @@ popd
 # fix strange perms
 find %{buildroot}%{_datadir}/nagios -type d | xargs chmod 755
 find %{buildroot}%{_datadir}/nagios/www -type f | xargs chmod 644
-find %{buildroot}%{_libdir}/nagios/cgi -type f | xargs chmod 755
+chmod 755 \
+    %{buildroot}%{_libdir}/nagios/cgi/* \
+    %{buildroot}%{_sbindir}/*
 
 # fix default config
 perl -pi \
