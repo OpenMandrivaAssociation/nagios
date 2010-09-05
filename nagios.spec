@@ -5,11 +5,11 @@
 
 Summary:	Host/service/network monitoring program
 Name:		nagios
-Version:	3.2.1
+Version:	3.2.2
 %if %mdkversion < 201000
 %define subrel  1
 %endif
-Release:	%mkrel 2
+Release:	%mkrel 1
 License:	GPLv2
 Group:		Networking/Other
 URL:		http://www.nagios.org/
@@ -20,7 +20,7 @@ Source5:	favicon.ico
 Patch1:		nagios-scandir.diff
 Patch5:		nagios-mdv_conf.diff
 Patch6:		nagios-DESTDIR.diff
-Patch7:		nagios-3.1.0-format_not_a_string_literal_and_no_format_arguments.diff
+Patch7:		nagios-3.2.2-fix-format-errors.patch
 Patch8:		nagios-3.1.0-no_update_check_per_default_please.diff
 Requires(post): rpm-helper nagios-conf
 Requires(preun): rpm-helper nagios-conf
@@ -123,11 +123,10 @@ compile against.
 
 %prep
 %setup -q
-
 %patch1 -p0
 %patch5 -p0
 %patch6 -p0
-%patch7 -p0
+%patch7 -p1
 %patch8 -p1
 
 cp %{SOURCE1} nagios.init
