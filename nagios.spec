@@ -9,7 +9,7 @@ Version:	3.2.3
 %if %mdkversion < 201000
 %define subrel  1
 %endif
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPLv2
 Group:		Networking/Other
 URL:		http://www.nagios.org/
@@ -28,21 +28,12 @@ Requires(postun): rpm-helper apache-conf
 Requires:	apache-conf
 Requires:	nagios-conf
 Requires:	nagios-plugins
-BuildRequires:	freetype2-devel
-BuildRequires:	freetype-devel
 BuildRequires: 	gd-devel
 BuildRequires:	imagemagick
 BuildRequires:	jpeg-devel
-BuildRequires:  libtool
+BuildRequires:  libtool-devel
 BuildRequires:	multiarch-utils >= 1.0.3
-BuildRequires:	nail
 BuildRequires:	perl-devel
-BuildRequires:	png-devel
-BuildRequires:	X11-devel
-BuildRequires:	xpm-devel
-BuildRequires:	zlib-devel
-BuildRequires: 	gdbm-devel
-BuildRequires: 	perl-devel
 Obsoletes:	netsaint
 Provides:	netsaint
 Epoch:		1
@@ -137,9 +128,8 @@ cp %{SOURCE5} favicon.ico
 export CFLAGS="$CFLAGS -fPIC"
 export CXXFLAGS="$CXXFLAGS -fPIC"
 export FFLAGS="$FFLAGS -fPIC"
-
-./configure \
-    --prefix=%{_prefix} \
+%define _disable_ld_no_undefined 1
+%configure2_5x \
     --with-httpd-conf=%{_sysconfdir}/httpd/conf/webapps.d \
     --with-checkresult-dir=/var/spool/nagios/checkresults \
     --with-temp-dir=/tmp \
