@@ -136,6 +136,9 @@ export FFLAGS="$FFLAGS -fPIC"
 # bug
 perl -pi -e "s|/var/log/nagios/spool/checkresults|/var/spool/nagios/checkresults|g" include/locations.h
 
+# the helloworld one doesn't like -fPIE
+perl -pi -e "s|-fPIE||g" module/Makefile
+
 %make all
 
 pushd contrib
@@ -311,5 +314,5 @@ chmod 755 %buildroot%{_var}/lib/rpm/filetriggers/nagios.script
 %{_datadir}/nagios/www
 
 %files devel
-%multiarch %{multiarch_includedir}/nagios/locations.h
+%{multiarch_includedir}/nagios/locations.h
 %{_includedir}/nagios
