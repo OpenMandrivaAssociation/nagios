@@ -1,0 +1,10 @@
+--- Makefile.in	2007-11-10 23:54:35.000000000 +0100
++++ Makefile.in.oden	2007-12-04 13:37:28.000000000 +0100
+@@ -235,6 +235,7 @@
+ 	@echo ""
+ 
+ install-webconf:
++	$(INSTALL) -m 775 $(INSTALL_OPTS) -d $(DESTDIR)$(HTTPD_CONF)
+ 	$(INSTALL) -m 644 sample-config/httpd.conf $(DESTDIR)$(HTTPD_CONF)/nagios.conf
+ 
+ 	@echo ""
