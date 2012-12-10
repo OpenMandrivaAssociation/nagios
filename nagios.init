@@ -1,0 +1,91 @@
+#!/bin/bash
+#
+# nagios       Starts and stops the Nagios monitor
+#              used to provide network services status.
+#
+# chkconfig: 345 99 01
+# description: Nagios network monitor
+# pidfile: /var/run/nagios/nagios.pid
+# config: /etc/nagios/nagios.cfg
+
+# Comments to support LSB init script conventions
+### BEGIN INIT INFO
+# Provides: nagios
+# Required-Start: $network
+# Requires-Stop: $network
+# Should-Start: httpd ndo2db
+# Should-Stop: httpd ndo2db
+# Default-Start:  3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: Starts and stops the Nagios monitor.
+# Description: Nagios network monitor.
+### END INIT INFO
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ "${NETWORKING}" = "no" ] && exit 0
+
+[ -f /etc/nagios/nagios.cfg ] || exit 0
+[ -f /usr/sbin/nagios ] || exit 0
+
+nagios_cmd=`grep "command_file" /etc/nagios/nagios.cfg|cut -d= -f2` 
+nagios_pidfile=`grep "lock_file" /etc/nagios/nagios.cfg|cut -d= -f2` 
+
+RETVAL=0
+
+# See how we were called.
+case "$1" in
+  start)
+	[ -f $nagios_cmd ] && rm -f $nagios_cmd 
+        if [ -n "`/sbin/pidof nagios`" ]; then
+            action "nagios: already running: " /bin/false
+            exit 1
+	fi
+	echo -n "Starting nagios daemon: "
+	export LC_ALL=C
+	daemon nagios -d /etc/nagios/nagios.cfg
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/nagios
+	;;
+  stop)
+	echo -n "Shutting down nagios daemon: "
+	killproc nagios
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/nagios
+	[ -f $nagios_cmd ] && rm -f $nagios_cmd
+	[ -f $nagios_pidfile ] && rm -f $nagios_pidfile
+	;;
+  status)
+	status nagios
+	RETVAL=$?
+	;;
+  restart|reload)
+	$0 stop
+	$0 start
+	RETVAL=$?
+	;;
+  condrestart)
+	if [ -f /var/lock/subsys/nagios ]; then
+	    $0 stop
+	    $0 start
+	fi
+	;;
+  configtest)
+        echo -n "Testing the nagios configuration: "
+        nagios -v /etc/nagios/nagios.cfg
+	RETVAL=$?
+	echo
+        ;;
+  *)
+	echo "Usage: nagios {start|stop|status|restart|reload|condrestart|configtest}"
+	exit 1
+esac
+
+exit $RETVAL
