@@ -1,6 +1,7 @@
---- sample-config/cgi.cfg.in	2007-08-16 02:27:08.000000000 +0200
-+++ sample-config/cgi.cfg.in.oden	2007-08-31 21:20:46.000000000 +0200
-@@ -113,7 +113,7 @@
+diff -Naur -x svn-commit.tmp~ nagios/sample-config/cgi.cfg.in nagios-mdv-config/sample-config/cgi.cfg.in
+--- nagios/sample-config/cgi.cfg.in	2012-02-13 21:40:42.000000000 +0100
++++ nagios-mdv-config/sample-config/cgi.cfg.in	2013-02-03 13:28:10.283047088 +0200
+@@ -116,7 +116,7 @@
  # not use authorization.  You may use an asterisk (*) to
  # authorize any user who has authenticated to the web server.
  
@@ -9,7 +10,7 @@
  
  
  
-@@ -125,7 +125,7 @@
+@@ -128,7 +128,7 @@
  # an asterisk (*) to authorize any user who has authenticated
  # to the web server.
  
@@ -18,7 +19,7 @@
  
  
  
-@@ -138,7 +138,7 @@
+@@ -141,7 +141,7 @@
  # You may use an asterisk (*) to authorize any user who has
  # authenticated to the web server.
  
@@ -27,7 +28,7 @@
  
  
  
-@@ -151,8 +151,8 @@
+@@ -154,8 +154,8 @@
  # to authorize any user who has authenticated to the web server.
  
  
@@ -38,7 +39,7 @@
  
  
  
-@@ -165,8 +165,8 @@
+@@ -168,8 +168,8 @@
  # authorization).  You may use an asterisk (*) to authorize any
  # user who has authenticated to the web server.
  
@@ -49,12 +50,24 @@
  
  
  
-@@ -245,7 +245,7 @@
- # This option allows you to specify the refresh rate in seconds
- # of various CGIs (status, statusmap, extinfo, and outages).  
+diff -Naur -x svn-commit.tmp~ nagios/sample-config/nagios.cfg.in nagios-mdv-config/sample-config/nagios.cfg.in
+--- nagios/sample-config/nagios.cfg.in	2012-04-23 13:01:57.000000000 +0200
++++ nagios-mdv-config/sample-config/nagios.cfg.in	2013-02-03 16:23:34.067118252 +0200
+@@ -54,6 +54,8 @@
+ #cfg_dir=@sysconfdir@/switches
+ #cfg_dir=@sysconfdir@/routers
  
--refresh_rate=90
-+refresh_rate=30
++# Definitions for plugin commands
++cfg_dir=@sysconfdir@/plugins.d
+ 
+ 
+ 
+@@ -728,7 +730,7 @@
+ # by Nagios Enterprises from the update check is processed in accordance 
+ # with our privacy policy - see http://api.nagios.org for details.
+ 
+-check_for_updates=1
++check_for_updates=0
  
  
  

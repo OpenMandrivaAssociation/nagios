@@ -1,0 +1,11 @@
+[Unit]
+Description=Nagios network monitor
+After=syslog.target network.target
+ 
+[Service]
+Type=forking
+PIDFile=/var/run/nagios/nagios.pid
+ExecStart=/usr/sbin/nagios -d /etc/nagios/nagios.cfg
+ 
+[Install]
+WantedBy=multi-user.target
