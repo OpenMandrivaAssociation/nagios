@@ -7,7 +7,7 @@
 Summary:    Host/service/network monitoring program
 Name:       nagios
 Version:    3.5.0
-Release:    1
+Release:    2
 License:    GPLv2
 Group:      Networking/Other
 URL:        http://www.nagios.org/
@@ -225,16 +225,14 @@ cat > %{buildroot}%{_webappconfdir}/%{name}.conf <<EOF
 ScriptAlias /%{name}/cgi-bin %{_libdir}/%{name}/cgi
 
 <Directory %{_libdir}/%{name}/cgi>
-    Order allow,deny
-    Allow from all
+    Require all granted
     Options ExecCGI
 </Directory>
 
 Alias /%{name} %{_datadir}/%{name}/www
 
 <Directory %{_datadir}/%{name}/www>
-    Order allow,deny
-    Allow from all
+    Require all granted
 </Directory>
 EOF
 
