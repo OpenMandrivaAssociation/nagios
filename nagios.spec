@@ -85,8 +85,8 @@ This package provides include files that Nagios-related applications may
 compile against.
 
 %prep
-%setup -q -n nagios
-%patch1 -p1
+%setup -q 
+%apply_patches
 
 %build
 %serverbuild
