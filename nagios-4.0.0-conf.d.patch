@@ -1,0 +1,39 @@
+diff -Naur -x '*~' nagios/sample-config/nagios.cfg.in nagios-conf.d/sample-config/nagios.cfg.in
+--- nagios/sample-config/nagios.cfg.in	2013-09-20 21:01:20.000000000 +0200
++++ nagios-conf.d/sample-config/nagios.cfg.in	2013-10-02 18:28:42.682594419 +0200
+@@ -25,34 +25,7 @@
+ # You can split your object definitions across several config files
+ # if you wish (as shown below), or keep them all in a single config file.
+ 
+-# You can specify individual object config files as shown below:
+-cfg_file=@sysconfdir@/objects/commands.cfg
+-cfg_file=@sysconfdir@/objects/contacts.cfg
+-cfg_file=@sysconfdir@/objects/timeperiods.cfg
+-cfg_file=@sysconfdir@/objects/templates.cfg
+-
+-# Definitions for monitoring the local (Linux) host
+-cfg_file=@sysconfdir@/objects/localhost.cfg
+-
+-# Definitions for monitoring a Windows machine
+-#cfg_file=@sysconfdir@/objects/windows.cfg
+-
+-# Definitions for monitoring a router/switch
+-#cfg_file=@sysconfdir@/objects/switch.cfg
+-
+-# Definitions for monitoring a network printer
+-#cfg_file=@sysconfdir@/objects/printer.cfg
+-
+-
+-# You can also tell Nagios to process all config files (with a .cfg
+-# extension) in a particular directory by using the cfg_dir
+-# directive as shown below:
+-
+-#cfg_dir=@sysconfdir@/servers
+-#cfg_dir=@sysconfdir@/printers
+-#cfg_dir=@sysconfdir@/switches
+-#cfg_dir=@sysconfdir@/routers
+-
++cfg_dir=@sysconfdir@/conf.d
+ 
+ 
+ 
