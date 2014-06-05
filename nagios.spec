@@ -187,10 +187,12 @@ chmod 755 \
 
 # fix default config
 perl -pi \
-    -e "s|=/var/log/nagios/rw/|=/var/spool/nagios/|g" \
-    %{buildroot}%{_sysconfdir}/nagios/*.cfg
+    -e 's|^check_for_updates=1|check_for_updates=0|;' \
+    -e 's|^#query_socket=|query_socket=|;' \
+    -e "s|=/var/log/nagios/rw/|=/var/spool/nagios/|;" \
+    %{buildroot}%{_sysconfdir}/nagios/nagios.cfg
 perl -pi \
-    -e "s|^physical_html_path=.*|physical_html_path=%{_datadir}/nagios/www|g" \
+    -e "s|^physical_html_path=.*|physical_html_path=%{_datadir}/nagios/www|;" \
     %{buildroot}%{_sysconfdir}/nagios/cgi.cfg
 
 
@@ -207,7 +209,6 @@ cat > %{buildroot}%{_webappconfdir}/%{name}.conf <<EOF
 ScriptAlias /%{name}/cgi-bin %{_libdir}/%{name}/cgi
 
 <Directory %{_libdir}/%{name}/cgi>
-    Require all granted
     Options ExecCGI
     Require all granted
 </Directory>
@@ -270,7 +271,6 @@ fi
 %{_bindir}/gpasswd -a %{cmdusr} %{nsgrp} >/dev/null 2>&1 || :
 
 %post
-%_tmpfilescreate %{name}
 %_post_service %{name}
 
 %preun
@@ -308,5 +308,5 @@ fi
 %files devel
 %{multiarch_includedir}/nagios/locations.h
 %{_includedir}/nagios
-
+%{_libdir}/libnagios.a
 
