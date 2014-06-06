@@ -6,7 +6,7 @@
 
 Summary:    Host/service/network monitoring program
 Name:       nagios
-Version:    4.0.2
+Version:    4.0.7
 Release:    1
 License:    GPLv2
 Group:      Networking/Other
@@ -16,7 +16,6 @@ Source1:    %{name}.service
 Source2:    %{name}.tmpfiles
 Source5:    favicon.ico
 Patch1:     nagios-4.0.0-conf.d.patch
-Patch2:     nagios-4.0.2-CVE-2013-7108-CVE-2013-7205.patch
 Patch3:	    nagios-4.0.2-CVE-2014-1878.patch
 Requires(post): rpm-helper
 Requires(preun): rpm-helper
