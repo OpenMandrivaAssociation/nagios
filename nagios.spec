@@ -93,7 +93,7 @@ compile against.
 export CFLAGS="$CFLAGS -fPIC"
 export CXXFLAGS="$CXXFLAGS -fPIC"
 export FFLAGS="$FFLAGS -fPIC"
-%configure2_5x \
+%configure \
     --with-httpd-conf=%{_webappconfdir} \
     --with-checkresult-dir=/var/spool/nagios/checkresults \
     --with-temp-dir=/tmp \
