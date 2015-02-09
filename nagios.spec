@@ -293,7 +293,6 @@ fi
 %attr(-,%{nsusr},%{nsgrp}) %dir /var/log/nagios/archives
 %attr(2775,%{nsusr},%{cmdgrp}) %dir /var/spool/nagios
 %attr(-,%{nsusr},%{nsgrp}) %dir /var/spool/nagios/checkresults
-%attr(-,%{nsusr},%{nsgrp}) %dir /var/run/nagios
 %dir %{_libdir}/nagios/plugins/eventhandlers
 %{_libdir}/nagios/plugins/eventhandlers/*
 %{_var}/lib/rpm/filetriggers/nagios.*
