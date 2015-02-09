@@ -3,6 +3,7 @@ removed_sources:
   nagios-3.5.0.tar.gz: 972e76c638b7d3f15d994eaa8fce0e4907d5d6e1
   nagios-3.5.1.tar.gz: 486fd6c75db47000b96d6eebb1654c30d5e9bc72
   nagios-4.0.2.tar.gz: 74bd683dd441b6a56fae587555e9c7ac59d80e01
+  nagios-4.0.7.tar.gz: d2c4727ea34b4e1e865578c586aa128ce61f6a35
 sources:
   favicon.ico: 8120435785dc6c61e6f6bfae89af7c85d5fd06b0
-  nagios-4.0.7.tar.gz: d2c4727ea34b4e1e865578c586aa128ce61f6a35
+  nagios-4.0.8.tar.gz: d49586db6905a8e58a082251d8f89ef5c2cab872
