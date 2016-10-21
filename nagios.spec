@@ -6,12 +6,12 @@
 
 Summary:    Host/service/network monitoring program
 Name:       nagios
-Version:    4.0.8
+Version:    4.2.1
 Release:    1
 License:    GPLv2
 Group:      Networking/Other
 URL:        http://www.nagios.org/
-Source0:    http://prdownloads.sourceforge.net/nagios/%{name}-%{version}.tar.gz
+Source0:    http://downloads.sourceforge.net/project/nagios/nagios-4.x/%{name}-%{version}/%{name}-%{version}.tar.gz
 Source1:    %{name}.service
 Source2:    %{name}.tmpfiles
 Source5:    favicon.ico
