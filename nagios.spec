@@ -10,7 +10,7 @@ Version:    4.0.8
 Release:    1
 License:    GPLv2
 Group:      Networking/Other
-URL:        http://www.nagios.org/
+URL:        https://www.nagios.org/
 Source0:    http://prdownloads.sourceforge.net/nagios/%{name}-%{version}.tar.gz
 Source1:    %{name}.service
 Source2:    %{name}.tmpfiles
