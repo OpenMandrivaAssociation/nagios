@@ -21,6 +21,11 @@ Requires(preun): rpm-helper
 Requires(pre): rpm-helper
 Requires(postun): rpm-helper
 Requires:   nagios-plugins
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:  gd-devel
 BuildRequires:  imagemagick
 BuildRequires:  jpeg-devel
